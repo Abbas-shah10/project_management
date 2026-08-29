@@ -13,28 +13,51 @@ const sendEmail = async (options) => {
   const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent)
   const emailHtml = mailGenerator.generate(options.mailgenContent)
 
+  const {
+    MAILTRAP_SMTP_HOST,
+    MAILTRAP_SMTP_PORT,
+    MAILTRAP_SMTP_USER,
+    MAILTRAP_SMTP_PASS,
+  } = process.env;
+
+  const missingCredentials = [
+    !MAILTRAP_SMTP_HOST && "MAILTRAP_SMTP_HOST",
+    !MAILTRAP_SMTP_PORT && "MAILTRAP_SMTP_PORT",
+    !MAILTRAP_SMTP_USER && "MAILTRAP_SMTP_USER",
+    !MAILTRAP_SMTP_PASS && "MAILTRAP_SMTP_PASS",
+  ].filter(Boolean);
+
+  if (missingCredentials.length) {
+    throw new Error(
+      `Missing MAILTRAP credentials in .env: ${missingCredentials.join(", ")}`
+    );
+  }
+
   const transporter = nodemailer.createTransport({
-    host: process.env.MAILTRAP_SMTP_HOST,
-    port: process.env.MAILTRAP_SMTP_PORT,
+    host: MAILTRAP_SMTP_HOST,
+    port: Number(MAILTRAP_SMTP_PORT),
+    secure: Number(MAILTRAP_SMTP_PORT) === 465,
     auth: {
-      user: process.env.MAILTRAP_SMTP_USER,
-      pass: process.env.MAILTRAP_SMTP_PASS,
-    }
-  })
+      user: MAILTRAP_SMTP_USER,
+      pass: MAILTRAP_SMTP_PASS,
+    },
+  });
 
   const mail = {
     from: "mail.taskmanager@example.com",
     to: options.email,
     subject: options.subject,
     text: emailTextual,
-    html: emailHtml
-  }
+    html: emailHtml,
+  };
 
   try {
     await transporter.sendMail(mail);
   } catch (error) {
-    console.log("Email service failed. Make sure you have provided Your MAILTRAP credentials in the .env file");
-    console.error("Error:", error);
+    console.error(
+      "Email service failed. Make sure you have provided your MAILTRAP credentials in the .env file"
+    );
+    console.error("Error:", error.message || error);
   }
 }
 
