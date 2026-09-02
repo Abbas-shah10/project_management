@@ -303,5 +303,7 @@ export {
   verifyEmail,
   resendEmailVerification,
   refreshAccessToken,
-  forgotPasswordRequest
+  forgotPasswordRequest,
+  resetForgotPassword,
+  changeCurrentPassword,
 };
