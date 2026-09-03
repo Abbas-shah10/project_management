@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { changeCurrentPassword, forgotPasswordRequest, getCurrentUser, loginUser, logoutUser, refreshAccessToken, registerUser, resendEmailVerification, resetForgotPassword, verifyEmail } from '../controllers/auth.controller.js'
 import { validate } from '../middlewares/validator.middleware.js';
-import { userRegisterValidator, userLoginValidator, userForgotPasswordValidator, userResetForgotPassword, userResetForgotPasswordValidator, userChangeCurrentPasswordValidator } from '../validators/index.js';
+import { userRegisterValidator, userLoginValidator, userForgotPasswordValidator, userResetForgotPasswordValidator, userChangeCurrentPasswordValidator } from '../validators/index.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js'
 const router = Router();
 
