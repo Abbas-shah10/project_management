@@ -246,7 +246,7 @@ const updateMemberRoles = asyncHandler(async (req, res) => {
   }
 
   return res.status(200).json(
-    new ApiResponse(200, projectMember, "Project Member fetched successfully")
+    new ApiResponse(200, projectMember, "Project Member role updated successfully")
   )
 
 });
