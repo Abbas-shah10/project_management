@@ -51,7 +51,7 @@ const validateProjectPermission = (roles = []) => {
     roles.includes(givenRole);
 
     if (!roles.includes(givenRole)) {
-      throw new ApiError(403, "You don'nt have Permission to perform this actions")
+      throw new ApiError(403, "You don't have Permission to perform this actions")
     }
 
     next();
