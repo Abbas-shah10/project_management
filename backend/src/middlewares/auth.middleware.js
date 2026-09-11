@@ -48,8 +48,6 @@ const validateProjectPermission = (roles = []) => {
 
     req.user.role = givenRole;
 
-    roles.includes(givenRole);
-
     if (!roles.includes(givenRole)) {
       throw new ApiError(403, "You don't have Permission to perform this actions")
     }
