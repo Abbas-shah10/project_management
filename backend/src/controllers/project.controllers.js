@@ -253,7 +253,6 @@ const updateMemberRoles = asyncHandler(async (req, res) => {
 const deleteMember = asyncHandler(async (req, res) => {
   const { projectId, userId } = req.params;
 
-
   let projectMember = await ProjectMember.findOne({
     project: new mongoose.Types.ObjectId(projectId),
     user: new mongoose.Types.ObjectId(userId)
