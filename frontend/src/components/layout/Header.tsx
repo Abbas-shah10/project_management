@@ -3,7 +3,7 @@ import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="h-12 flex items-center justify-between px-4 bg-[var(--bg-primary)] border-b border-[var(--border-primary)] shrink-0">
+    <header className="h-12 flex w-full items-center justify-between px-4 bg-[var(--bg-primary)] border-b border-[var(--border-primary)] shrink-0">
       <div className="flex items-center gap-2">
         <div className="relative hidden sm:block">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-tertiary)]" />

@@ -44,10 +44,10 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
         {sidebarOpen && (
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-              L
+              P
             </div>
 
-            <span className="font-semibold text-gray-900">LibraryMS</span>
+            <span className="font-semibold text-gray-900">Project</span>
           </div>
         )}
 
@@ -61,7 +61,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-1 p-5 ">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -81,7 +81,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             >
               <Icon size={18} />
 
-              {sidebarOpen && <span>{item.label}</span>}
+              {sidebarOpen && <span className="text-2xl">{item.label}</span>}
             </NavLink>
           );
         })}
