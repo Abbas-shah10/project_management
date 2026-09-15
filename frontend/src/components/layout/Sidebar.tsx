@@ -1,110 +1,104 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  FolderKanban,
+  BookOpen,
   Users,
   Settings,
+  LogOut,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useAppStore } from "../../stores/app-store";
 
 const navItems = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/projects", label: "Projects", icon: FolderKanban },
-  { to: "/team", label: "Team", icon: Users },
-  { to: "/settings", label: "Settings", icon: Settings },
+  {
+    label: "Dashboard",
+    to: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Projects",
+    to: "/projects",
+    icon: BookOpen,
+  },
+  {
+    label: "Teams",
+    to: "/teams",
+    icon: Users,
+  },
+  {
+    label: "Settings",
+    to: "/settings",
+    icon: Settings,
+  },
 ];
 
-export default function Sidebar() {
-  const { sidebarOpen, toggleSidebar } = useAppStore();
-
+export default function Sidebar({ sidebarOpen, toggleSidebar }) {
   return (
     <aside
-      className={`flex flex-col overflow-hidden border-r border-[var(--border-primary)] bg-[var(--bg-secondary)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-300 ${
-        sidebarOpen ? "w-60" : "w-[4.5rem]"
+      className={`flex h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 ${
+        sidebarOpen ? "w-64" : "w-20"
       }`}
     >
-      <div
-        className={`flex h-14 items-center border-b border-[var(--border-primary)] px-3 ${
-          sidebarOpen ? "justify-between" : "justify-center"
-        }`}
-      >
+      {/* Header */}
+      <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
         {sidebarOpen && (
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[var(--accent-primary)]/10 text-[10px] font-bold text-[var(--accent-primary)] shadow-inner">
-              PM
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
+              L
             </div>
-            <span className="text-sm font-semibold tracking-[0.2em] text-[var(--text-primary)] uppercase">
-              PM
-            </span>
+
+            <span className="font-semibold text-gray-900">LibraryMS</span>
           </div>
         )}
 
         <button
-          type="button"
           onClick={toggleSidebar}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900"
           aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-[var(--border-primary)] bg-[var(--bg-primary)] text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--accent-primary)]/40 hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
         >
-          {sidebarOpen ? (
-            <ChevronLeft className="h-3.5 w-3.5" />
-          ) : (
-            <ChevronRight className="h-3.5 w-3.5" />
-          )}
+          {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
         </button>
       </div>
 
-      <nav className="flex-1 space-y-1 px-2 py-3">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === "/"}
-            title={item.label}
-            className={({ isActive }) =>
-              `group relative flex items-center rounded-xl px-2.5 py-2.5 text-xs font-medium transition-all duration-200 ${
-                sidebarOpen ? "gap-3" : "justify-center"
-              } ${
-                isActive
-                  ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] shadow-[inset_0_0_0_1px_rgba(var(--accent-primary-rgb),0.12)]"
-                  : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <span
-                  className={`absolute left-1.5 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[var(--accent-primary)] transition-all duration-200 ${
-                    isActive ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-                <item.icon className="h-4 w-4 shrink-0" />
-                {sidebarOpen && <span className="truncate">{item.label}</span>}
-              </>
-            )}
-          </NavLink>
-        ))}
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1 p-3">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                  sidebarOpen ? "gap-3" : "justify-center"
+                } ${
+                  isActive
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                }`
+              }
+            >
+              <Icon size={18} />
+
+              {sidebarOpen && <span>{item.label}</span>}
+            </NavLink>
+          );
+        })}
       </nav>
 
-      {sidebarOpen && (
-        <div className="border-t border-[var(--border-primary)] px-3 py-3">
-          <div className="flex items-center gap-3 rounded-xl bg-[var(--bg-primary)] px-2.5 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)]">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] text-[10px] font-bold text-white shadow-sm">
-              U
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-[var(--text-primary)]">
-                User
-              </p>
-              <p className="truncate text-[10px] text-[var(--text-tertiary)]">
-                user@email.com
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Bottom */}
+      <div className="border-t border-gray-200 p-3">
+        <button
+          className={`flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 ${
+            sidebarOpen ? "gap-3" : "justify-center"
+          }`}
+        >
+          <LogOut size={18} />
+
+          {sidebarOpen && <span>Logout</span>}
+        </button>
+      </div>
     </aside>
   );
 }
