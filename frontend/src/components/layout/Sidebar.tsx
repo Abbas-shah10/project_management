@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  BookOpen,
+  FolderKanban,
   Users,
   Settings,
   LogOut,
@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const navItems = [
+const mainItems = [
   {
     label: "Dashboard",
     to: "/dashboard",
@@ -18,13 +18,16 @@ const navItems = [
   {
     label: "Projects",
     to: "/projects",
-    icon: BookOpen,
+    icon: FolderKanban,
   },
   {
     label: "Teams",
     to: "/teams",
     icon: Users,
   },
+];
+
+const workspaceItems = [
   {
     label: "Settings",
     to: "/settings",
@@ -35,25 +38,36 @@ const navItems = [
 export default function Sidebar({ sidebarOpen, toggleSidebar }) {
   return (
     <aside
-      className={`flex h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 ${
-        sidebarOpen ? "w-64" : "w-20"
-      }`}
+      className={`
+        flex h-screen flex-col
+        border-r border-slate-800
+        bg-slate-950 text-white
+        transition-all duration-300
+        ${sidebarOpen ? "w-64" : "w-20"}
+      `}
     >
-      {/* Header */}
-      <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
+      {/* Logo */}
+      <div className="flex h-16 items-center justify-between border-b border-slate-800 px-4">
         {sidebarOpen && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 font-bold">
               P
             </div>
 
-            <span className="font-semibold text-gray-900">Project</span>
+            <div>
+              <h1 className="text-sm font-semibold">ProjectHub</h1>
+              <p className="text-xs text-slate-500">Project Manager</p>
+            </div>
           </div>
         )}
 
         <button
           onClick={toggleSidebar}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+          className="
+            flex h-8 w-8 items-center justify-center
+            rounded-lg text-slate-400
+            transition hover:bg-slate-800 hover:text-white
+          "
           aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
           {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
@@ -61,38 +75,66 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-5 ">
-        {navItems.map((item) => {
-          const Icon = item.icon;
+      <nav className="flex-1 overflow-y-auto px-3 py-5">
+        {/* Main */}
+        {sidebarOpen && (
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Main
+          </p>
+        )}
 
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  sidebarOpen ? "gap-3" : "justify-center"
-                } ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`
-              }
-            >
-              <Icon size={18} />
+        <div className="space-y-1">
+          {mainItems.map((item) => (
+            <SidebarItem key={item.to} item={item} sidebarOpen={sidebarOpen} />
+          ))}
+        </div>
 
-              {sidebarOpen && <span className="text-2xl">{item.label}</span>}
-            </NavLink>
-          );
-        })}
+        {/* Workspace */}
+        <div className="mt-7">
+          {sidebarOpen && (
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Workspace
+            </p>
+          )}
+
+          <div className="space-y-1">
+            {workspaceItems.map((item) => (
+              <SidebarItem
+                key={item.to}
+                item={item}
+                sidebarOpen={sidebarOpen}
+              />
+            ))}
+          </div>
+        </div>
       </nav>
 
-      {/* Bottom */}
-      <div className="border-t border-gray-200 p-3">
+      {/* User / Logout */}
+      <div className="border-t border-slate-800 p-3">
+        {sidebarOpen && (
+          <div className="mb-2 flex items-center gap-3 rounded-lg px-3 py-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold">
+              A
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">Abbas</p>
+              <p className="text-xs text-slate-500">Admin</p>
+            </div>
+          </div>
+        )}
+
         <button
-          className={`flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 ${
-            sidebarOpen ? "gap-3" : "justify-center"
-          }`}
+          className={`
+            flex w-full items-center rounded-lg
+            px-3 py-2.5
+            text-sm font-medium
+            text-slate-400
+            transition
+            hover:bg-red-500/10
+            hover:text-red-400
+            ${sidebarOpen ? "gap-3" : "justify-center"}
+          `}
         >
           <LogOut size={18} />
 
@@ -100,5 +142,35 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
         </button>
       </div>
     </aside>
+  );
+}
+
+/* Reusable navigation item */
+function SidebarItem({ item, sidebarOpen }) {
+  const Icon = item.icon;
+
+  return (
+    <NavLink
+      to={item.to}
+      className={({ isActive }) =>
+        `
+        group flex items-center rounded-lg
+        px-3 py-2.5
+        text-sm font-medium
+        transition-all duration-200
+        ${sidebarOpen ? "gap-3" : "justify-center"}
+
+        ${
+          isActive
+            ? "bg-blue-600 text-white shadow-sm"
+            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+        }
+        `
+      }
+    >
+      <Icon size={18} strokeWidth={2} />
+
+      {sidebarOpen && <span>{item.label}</span>}
+    </NavLink>
   );
 }
