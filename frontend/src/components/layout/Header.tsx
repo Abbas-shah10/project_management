@@ -1,17 +1,9 @@
-import { Search, Bell } from 'lucide-react';
-import ThemeToggle from '../ui/ThemeToggle';
+import { Search, Bell } from "lucide-react";
+import ThemeToggle from "../ui/ThemeToggle";
 
-interface HeaderProps {
-  title: string;
-}
-
-export default function Header({ title }: HeaderProps) {
+export default function Header() {
   return (
     <header className="h-12 flex items-center justify-between px-4 bg-[var(--bg-primary)] border-b border-[var(--border-primary)] shrink-0">
-      <h1 className="text-sm font-semibold text-[var(--text-primary)]">
-        {title}
-      </h1>
-
       <div className="flex items-center gap-2">
         <div className="relative hidden sm:block">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-tertiary)]" />
