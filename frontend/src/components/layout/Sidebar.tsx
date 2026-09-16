@@ -8,11 +8,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import useAuthStore from "../../stores/authStore";
 
 const mainItems = [
   {
     label: "Dashboard",
-    to: "/dashboard",
+    to: "/",
     icon: LayoutDashboard,
   },
   {
@@ -35,7 +36,14 @@ const workspaceItems = [
   },
 ];
 
-export default function Sidebar({ sidebarOpen, toggleSidebar }) {
+interface SidebarProps {
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
+  const user = useAuthStore((state) => state.user);
+  const { logout } = useAuthStore();
   return (
     <aside
       className={`
@@ -118,8 +126,8 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             </div>
 
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">Abbas</p>
-              <p className="text-xs text-slate-500">Admin</p>
+              <p className="truncate text-sm font-medium">{user?.username}</p>
+              <p className="text-xs text-slate-500">{user?.role}</p>
             </div>
           </div>
         )}
@@ -135,6 +143,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             hover:text-red-400
             ${sidebarOpen ? "gap-3" : "justify-center"}
           `}
+          onClick={logout}
         >
           <LogOut size={18} />
 
@@ -145,8 +154,17 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
   );
 }
 
+interface SidebarItemProps {
+  item: {
+    label: string;
+    to: string;
+    icon: React.ComponentType<{ size: number; strokeWidth?: number }>;
+  };
+  sidebarOpen: boolean;
+}
+
 /* Reusable navigation item */
-function SidebarItem({ item, sidebarOpen }) {
+function SidebarItem({ item, sidebarOpen }: SidebarItemProps) {
   const Icon = item.icon;
 
   return (

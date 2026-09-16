@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/authStore";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -7,11 +8,20 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login } = useAuthStore();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);
+
+    try {
+      await login(email, password);
+      alert("User login successfully");
+      navigate("/");
+    } catch (error: any) {
+      console.log("error logging user", error.message);
+    }
   };
 
   return (
@@ -93,12 +103,12 @@ const Login = () => {
 
         <p className="mt-8 text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
-          <a
-            href="#sign-up"
+          <Link
+            to="/register"
             className="font-semibold text-indigo-600 hover:text-indigo-500"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </section>
     </main>

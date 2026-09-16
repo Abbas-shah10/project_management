@@ -4,12 +4,14 @@ import AppLayout from "../components/layout/AppLayout";
 import Projects from "../pages/projects/Projects";
 import Login from "../pages/auth/Login";
 import ProtectedRoutes from "./ProtectedRoutes";
+import Signup from "../pages/auth/Signup";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Signup />} />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoutes />}>
