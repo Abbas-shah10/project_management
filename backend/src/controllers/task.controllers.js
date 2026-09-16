@@ -127,6 +127,14 @@ const getTaskById = asyncHandler(async (req, res) => {
     }
   ]);
 
+  if (!task || task.length === 0) {
+    throw new ApiError(404, "Task not found")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, task, 'All tasks fetched successfully')
+  )
+
 });
 const createSubTask = asyncHandler(async (req, res) => { });
 const updateSubTask = asyncHandler(async (req, res) => { });
