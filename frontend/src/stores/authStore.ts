@@ -1,28 +1,38 @@
 import { create } from "zustand";
-import api from "../api/axios";
 
-const AuthStore = create((set) => ({
-  user: null,
-  loading: false,
-  error: null,
+interface AuthState {
+  user: any;
+  accessToken: string | null;
+  refreshToken: string | null;
+  setAuth: (user: any, accessToken: string, refreshToken: string) => void;
+  logout: () => void;
+}
 
-  login: async (email: string, password: string) => {
-    set({ loading: true });
+const useAuthStore = create<AuthState>((set) => ({
+  // Safe parsing for strings/null
+  user: JSON.parse(
+    typeof window !== "undefined"
+      ? localStorage.getItem("user") || "null"
+      : "null",
+  ),
+  accessToken:
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
+  refreshToken:
+    typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
 
-    try {
-      const { data } = await api.post("/auth/login", { email, password });
+  setAuth: (user, accessToken, refreshToken) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+    set({ user, accessToken, refreshToken });
+  },
 
-      set({
-        user: data.user || data.data?.user,
-        loading: false,
-        error: null,
-      });
-    } catch (error: any) {
-      set({
-        error: error.message,
-      });
-    }
+  logout: () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    set({ user: null, accessToken: null, refreshToken: null });
   },
 }));
 
-export default AuthStore;
+export default useAuthStore;
