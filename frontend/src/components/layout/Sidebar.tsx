@@ -47,15 +47,14 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
   return (
     <aside
       className={`
-        flex h-screen flex-col
-        border-r border-slate-800
+        sticky top-0 flex h-screen shrink-0 flex-col border-r border-slate-800
         bg-slate-950 text-white
         transition-all duration-300
         ${sidebarOpen ? "w-64" : "w-20"}
       `}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-slate-800 px-4">
+      <div className="flex items-center justify-between border-b border-slate-800 px-4">
         {sidebarOpen && (
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 font-bold">
@@ -68,7 +67,6 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
             </div>
           </div>
         )}
-
         <button
           onClick={toggleSidebar}
           className="
@@ -152,26 +150,24 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
       </div>
     </aside>
   );
-}
+  interface SidebarItemProps {
+    item: {
+      label: string;
+      to: string;
+      icon: React.ComponentType<{ size: number; strokeWidth?: number }>;
+    };
+    sidebarOpen: boolean;
+  }
 
-interface SidebarItemProps {
-  item: {
-    label: string;
-    to: string;
-    icon: React.ComponentType<{ size: number; strokeWidth?: number }>;
-  };
-  sidebarOpen: boolean;
-}
+  /* Reusable navigation item */
+  function SidebarItem({ item, sidebarOpen }: SidebarItemProps) {
+    const Icon = item.icon;
 
-/* Reusable navigation item */
-function SidebarItem({ item, sidebarOpen }: SidebarItemProps) {
-  const Icon = item.icon;
-
-  return (
-    <NavLink
-      to={item.to}
-      className={({ isActive }) =>
-        `
+    return (
+      <NavLink
+        to={item.to}
+        className={({ isActive }) =>
+          `
         group flex items-center rounded-lg
         px-3 py-2.5
         text-sm font-medium
@@ -184,11 +180,12 @@ function SidebarItem({ item, sidebarOpen }: SidebarItemProps) {
             : "text-slate-400 hover:bg-slate-800 hover:text-white"
         }
         `
-      }
-    >
-      <Icon size={18} strokeWidth={2} />
+        }
+      >
+        <Icon size={18} strokeWidth={2} />
 
-      {sidebarOpen && <span>{item.label}</span>}
-    </NavLink>
-  );
+        {sidebarOpen && <span>{item.label}</span>}
+      </NavLink>
+    );
+  }
 }

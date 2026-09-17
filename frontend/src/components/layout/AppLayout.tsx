@@ -9,7 +9,7 @@ export default function AppLayout() {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="flex  border-slate-800 text-[(--text-primary)] antialiased">
+    <div className="flex h-screen overflow-hidden border-slate-800 text-[(--text-primary)] antialiased">
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
