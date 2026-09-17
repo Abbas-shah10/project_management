@@ -12,7 +12,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import useAuthStore from "../stores/authStore";
+import useAuthStore from "../../stores/authStore";
 
 const projects = [
   {

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "../pages/Home";
+import Dashboard from "../pages/dashboard/Dashboard";
 import AppLayout from "../components/layout/AppLayout";
 import Projects from "../pages/projects/Projects";
 import Login from "../pages/auth/Login";
@@ -16,7 +16,7 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoutes />}>
         <Route element={<AppLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
         </Route>
       </Route>
