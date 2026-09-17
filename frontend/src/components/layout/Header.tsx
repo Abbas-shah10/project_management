@@ -22,7 +22,7 @@ export default function Header() {
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[(--danger)] rounded-full" />
             </button>
           </div>
-          <div className="w-7 h-7 rounded-full bg-[(--accent-primary)] flex items-center justify-center text-white text-[10px] font-bold cursor-pointer bg-blue-400">
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold cursor-pointer bg-blue-400">
             {user.username?.charAt(0).toUpperCase()}
           </div>
         </div>
