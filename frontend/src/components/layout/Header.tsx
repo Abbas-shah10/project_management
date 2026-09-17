@@ -5,7 +5,7 @@ export default function Header() {
   const user = useAuthStore((state) => state.user);
   return (
     <>
-      <header className="h-12 flex w-full items-center justify-between px-4 bg-[(--bg-primary)] border-b  shrink-0">
+      <header className="h-12 flex w-full bg-slate-950 text-white border-slate-800 items-center justify-between px-4  border-b  shrink-0">
         <div className="flex justify-between items-center gap-2">
           <div className="relative hidden sm:block">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[(--text-tertiary)]" />
