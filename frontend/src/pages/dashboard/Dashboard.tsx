@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import useAuthStore from "../../stores/authStore";
+import { Link } from "react-router-dom";
 
 const projects = [
   {
@@ -305,9 +306,12 @@ const Home = () => {
                 Project health
               </h2>
             </div>
-            <button className="inline-flex items-center gap-1 text-xs font-semibold text-rose-300 transition hover:text-rose-200">
+            <Link
+              to="/projects"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+            >
               View all <ArrowUpRight size={15} />
-            </button>
+            </Link>
           </div>
           <div className="mt-6 hidden grid-cols-[1.4fr_1fr_0.8fr_0.55fr] gap-4 border-b border-slate-800 pb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-600 sm:grid">
             <span>Project</span>
