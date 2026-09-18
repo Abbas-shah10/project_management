@@ -61,7 +61,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
               P
             </div>
 
-            <div>
+            <div className="py-3.5">
               <h1 className="text-sm font-semibold">ProjectHub</h1>
               <p className="text-xs text-slate-500">Project Manager</p>
             </div>
