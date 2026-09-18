@@ -88,15 +88,22 @@ function ProgressRing({ value }: { value: number }) {
 const Home = () => {
   const range = "This week";
   const { user } = useAuthStore();
+  const greeting = new Date().getHours() < 12 ? "morning" : "evening";
   return (
     <div className="space-y-8 pb-8 text-slate-100">
       <section className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
         <div>
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-300">
-            <Sparkles size={14} /> Monday, September 17, 2026
+            <Sparkles size={14} />{" "}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Good morning,{" "}
+            Good {greeting},{" "}
             <span className="text-rose-400">{user?.username}</span>
             <span className="text-rose-400">.</span>
           </h1>

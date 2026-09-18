@@ -10,7 +10,7 @@ interface ProjectState {
   projects: null | Project[];
   loading: boolean;
   error: string | null;
-  getAllProjects: () => Promise<void>;
+  fetchProjects: () => Promise<void>;
 }
 
 const projectStore = create<ProjectState>((set) => ({
@@ -18,14 +18,14 @@ const projectStore = create<ProjectState>((set) => ({
   loading: false,
   error: null,
 
-  getAllProjects: async () => {
+  fetchProjects: async () => {
     set({ loading: true, error: "" });
 
     try {
-      const { data } = await getAllProjects();
+      const payload = await getAllProjects();
 
       set({
-        projects: data.project || [],
+        projects: payload.project || [],
         loading: false,
         error: null,
       });
