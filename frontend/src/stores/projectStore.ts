@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { getAllProjects, createProject } from "../api/projectApi";
+import {
+  getAllProjects,
+  createProject,
+  deleteProject,
+} from "../api/projectApi";
 
 interface Project {
   _id: string;
@@ -44,6 +48,7 @@ interface ProjectState {
   error: string | null;
   fetchProjects: () => Promise<void>;
   createNewProject: (name: string, description: string) => Promise<void>;
+  deleteProjectById: (projectId: number) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
@@ -71,7 +76,7 @@ const useProjectStore = create<ProjectState>((set) => ({
     }
   },
   createNewProject: async (name: string, description: string) => {
-    set({ loading: true, error: "error" });
+    set({ loading: true, error: null });
 
     try {
       const payload = await createProject(name, description);
@@ -86,6 +91,24 @@ const useProjectStore = create<ProjectState>((set) => ({
         loading: false,
         error: null,
       }));
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error ? error.message : "Error creating new project",
+      });
+    }
+  },
+  deleteProjectById: async (projectId: number) => {
+    set({ loading: true, error: null });
+
+    try {
+      const payload = await deleteProject(projectId);
+
+      set({
+        loading: false,
+        error: null,
+      });
     } catch (error: unknown) {
       set({
         loading: false,

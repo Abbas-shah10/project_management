@@ -2,19 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
   CalendarDays,
-  Check,
   ChevronDown,
   CircleDashed,
   FolderKanban,
   Grid2X2,
   List,
   MoreHorizontal,
+  Pencil,
   Plus,
   Search,
   SlidersHorizontal,
-  X,
+  Trash2,
 } from "lucide-react";
 import useProjectStore from "../../stores/projectStore";
+import CreateProjectModal from "./CreateProject";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
@@ -69,14 +70,9 @@ function statusStyle(status: ProjectStatus) {
   return "bg-emerald-400/10 text-emerald-300";
 }
 
-function ProjectCard({
-  project,
-  onMenu,
-}: {
-  project: Project;
-  onMenu: () => void;
-}) {
+function ProjectCard({ project }: { project: Project }) {
   const colors = colorStyles[project.color];
+  const [openOptions, setOpenOptions] = useState(false);
 
   return (
     <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
@@ -86,13 +82,60 @@ function ProjectCard({
         >
           <FolderKanban size={20} />
         </div>
-        <button
-          onClick={onMenu}
-          className="rounded-lg p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white"
-          aria-label={`More options for ${project.name}`}
-        >
-          <MoreHorizontal size={19} />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setOpenOptions((isOpen) => !isOpen)}
+            className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
+            aria-label={`More options for ${project.name}`}
+            aria-expanded={openOptions}
+            aria-haspopup="menu"
+          >
+            <MoreHorizontal size={19} />
+          </button>
+
+          <div
+            className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
+              openOptions
+                ? "translate-y-0 scale-100 opacity-100"
+                : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+            }`}
+            role="menu"
+            aria-hidden={!openOptions}
+          >
+            <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Project actions
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                console.log(`Edit project ${project.name}`);
+                setOpenOptions(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+              role="menuitem"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
+                <Pencil size={14} />
+              </span>
+              <span>Edit project</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                console.log(`Delete project ${project.name}`);
+                setOpenOptions(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
+              role="menuitem"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                <Trash2 size={14} />
+              </span>
+              <span>Delete project</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="mt-5">
@@ -148,7 +191,6 @@ const Projects = () => {
     useState<(typeof statusOptions)[number]>("All projects");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [newProjectName, setNewProjectName] = useState("");
   const { projects, fetchProjects } = useProjectStore();
 
   useEffect(() => {
@@ -279,11 +321,7 @@ const Projects = () => {
           }
         >
           {filteredProjects?.map((project) => (
-            <ProjectCard
-              key={project.name}
-              project={project}
-              onMenu={() => undefined}
-            />
+            <ProjectCard key={project.name} project={project} />
           ))}
         </section>
       ) : (
@@ -298,58 +336,11 @@ const Projects = () => {
         </section>
       )}
 
-      {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-300">
-                  New project
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-white">
-                  Start something meaningful
-                </h2>
-              </div>
-              <button
-                onClick={() => setIsCreateOpen(false)}
-                className="rounded-lg p-2 text-slate-500 hover:bg-slate-800 hover:text-white"
-                aria-label="Close modal"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <label
-              className="mt-6 block text-xs font-medium text-slate-400"
-              htmlFor="project-name"
-            >
-              Project name
-            </label>
-            <input
-              id="project-name"
-              autoFocus
-              value={newProjectName}
-              onChange={(event) => setNewProjectName(event.target.value)}
-              onKeyDown={(event) => event.key === "Enter"}
-              placeholder="e.g. Customer portal"
-              className="mt-2 h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-rose-400"
-            />
-            <div className="mt-6 flex justify-end gap-2">
-              <button
-                onClick={() => setIsCreateOpen(false)}
-                className="rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white"
-              >
-                Cancel
-              </button>
-              <button
-                // onClick={createProject}
-                className="inline-flex items-center gap-2 rounded-xl bg-rose-400 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-rose-300"
-              >
-                <Check size={16} /> Create project
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateProjectModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreated={fetchProjects}
+      />
     </div>
   );
 };
