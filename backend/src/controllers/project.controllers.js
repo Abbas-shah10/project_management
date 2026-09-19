@@ -59,7 +59,7 @@ const getProjects = asyncHandler(async (req, res) => {
   ])
 
   return res.status(200).json(
-    new ApiResponse(200, projects, "Projects fetched successfully")
+    new ApiResponse(200, { projects }, "Projects fetched successfully")
   )
 });
 const getProjectById = asyncHandler(async (req, res) => {

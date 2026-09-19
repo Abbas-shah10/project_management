@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
   CalendarDays,
@@ -14,11 +14,12 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
+import useProjectStore from "../../stores/projectStore";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
 interface Project {
-  id: number;
+  _id: number | string;
   name: string;
   description: string;
   status: ProjectStatus;
@@ -30,61 +31,6 @@ interface Project {
   members: string[];
   color: string;
 }
-
-const initialProjects: Project[] = [
-  {
-    id: 1,
-    name: "Website redesign",
-    description: "A clearer, faster experience for every customer.",
-    status: "On track",
-    progress: 72,
-    due: "2026-09-28",
-    dueLabel: "Sep 28, 2026",
-    tasks: "36 / 50 tasks",
-    team: "Design team",
-    members: ["MC", "LP", "AR"],
-    color: "rose",
-  },
-  {
-    id: 2,
-    name: "Mobile app launch",
-    description: "Bring the new mobile experience to the world.",
-    status: "At risk",
-    progress: 48,
-    due: "2026-10-04",
-    dueLabel: "Oct 04, 2026",
-    tasks: "18 / 38 tasks",
-    team: "Product team",
-    members: ["AK", "JP", "SN", "RM"],
-    color: "lime",
-  },
-  {
-    id: 3,
-    name: "Q4 marketing campaign",
-    description: "Build momentum with a campaign people remember.",
-    status: "On track",
-    progress: 86,
-    due: "2026-09-24",
-    dueLabel: "Sep 24, 2026",
-    tasks: "43 / 50 tasks",
-    team: "Growth team",
-    members: ["MC", "TD", "EW"],
-    color: "sky",
-  },
-  {
-    id: 4,
-    name: "Design system refresh",
-    description: "One thoughtful visual language for the whole product.",
-    status: "Completed",
-    progress: 100,
-    due: "2026-09-12",
-    dueLabel: "Sep 12, 2026",
-    tasks: "24 / 24 tasks",
-    team: "Design team",
-    members: ["AR", "LP"],
-    color: "violet",
-  },
-];
 
 const statusOptions = [
   "All projects",
@@ -136,7 +82,7 @@ function ProjectCard({
     <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
       <div className="flex items-start justify-between gap-4">
         <div
-          className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors.icon}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors?.icon}`}
         >
           <FolderKanban size={20} />
         </div>
@@ -171,14 +117,14 @@ function ProjectCard({
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
         <span
-          className={`block h-full rounded-full ${colors.bar}`}
+          className={`block h-full rounded-full ${colors?.bar}`}
           style={{ width: `${project.progress}%` }}
         />
       </div>
 
       <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-4">
         <div className="flex -space-x-2">
-          {project.members.map((member, index) => (
+          {project.members?.map((member, index) => (
             <span
               key={member}
               className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
@@ -197,50 +143,33 @@ function ProjectCard({
 }
 
 const Projects = () => {
-  const [projects, setProjects] = useState(initialProjects);
   const [query, setQuery] = useState("");
   const [status, setStatus] =
     useState<(typeof statusOptions)[number]>("All projects");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
+  const { projects, fetchProjects } = useProjectStore();
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  console.log("Projects: ", projects);
 
   const filteredProjects = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return projects.filter((project) => {
       const matchesQuery =
         !normalizedQuery ||
-        `${project.name} ${project.team}`
+        `${project.name} ${project?.team || "No team"}`
           .toLowerCase()
           .includes(normalizedQuery);
       const matchesStatus =
-        status === "All projects" || project.status === status;
+        status === "All projects" || project?.status === status;
       return matchesQuery && matchesStatus;
     });
   }, [projects, query, status]);
-
-  const createProject = () => {
-    const name = newProjectName.trim();
-    if (!name) return;
-    setProjects((current) => [
-      {
-        id: Date.now(),
-        name,
-        description: "A new project ready for your next big idea.",
-        status: "On track",
-        progress: 0,
-        due: "2026-10-31",
-        dueLabel: "Oct 31, 2026",
-        tasks: "0 / 0 tasks",
-        team: "Unassigned team",
-        members: ["AK"],
-        color: "rose",
-      },
-      ...current,
-    ]);
-    setNewProjectName("");
-    setIsCreateOpen(false);
-  };
 
   return (
     <div className="space-y-8 pb-8 text-slate-100">
@@ -269,19 +198,25 @@ const Projects = () => {
         <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
           <p className="text-xs text-slate-500">Total projects</p>
           <strong className="mt-2 block text-2xl text-white">
-            {projects.length}
+            {projects?.length}
           </strong>
         </div>
         <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
           <p className="text-xs text-slate-500">On track</p>
           <strong className="mt-2 block text-2xl text-emerald-300">
-            {projects.filter((project) => project.status === "On track").length}
+            {
+              projects?.filter((project) => project?.status === "On track")
+                .length
+            }
           </strong>
         </div>
         <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
           <p className="text-xs text-slate-500">Needs attention</p>
           <strong className="mt-2 block text-2xl text-amber-300">
-            {projects.filter((project) => project.status === "At risk").length}
+            {
+              projects?.filter((project) => project?.status === "At risk")
+                ?.length
+            }
           </strong>
         </div>
       </section>
@@ -337,15 +272,15 @@ const Projects = () => {
         </div>
       </section>
 
-      {filteredProjects.length > 0 ? (
+      {filteredProjects?.length > 0 ? (
         <section
           className={
             view === "grid" ? "grid gap-4 md:grid-cols-2" : "space-y-3"
           }
         >
-          {filteredProjects.map((project) => (
+          {filteredProjects?.map((project) => (
             <ProjectCard
-              key={project.id}
+              key={project.name}
               project={project}
               onMenu={() => undefined}
             />
@@ -394,7 +329,7 @@ const Projects = () => {
               autoFocus
               value={newProjectName}
               onChange={(event) => setNewProjectName(event.target.value)}
-              onKeyDown={(event) => event.key === "Enter" && createProject()}
+              onKeyDown={(event) => event.key === "Enter"}
               placeholder="e.g. Customer portal"
               className="mt-2 h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-rose-400"
             />
@@ -406,7 +341,7 @@ const Projects = () => {
                 Cancel
               </button>
               <button
-                onClick={createProject}
+                // onClick={createProject}
                 className="inline-flex items-center gap-2 rounded-xl bg-rose-400 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-rose-300"
               >
                 <Check size={16} /> Create project
