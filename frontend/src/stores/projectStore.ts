@@ -48,7 +48,7 @@ interface ProjectState {
   error: string | null;
   fetchProjects: () => Promise<void>;
   createNewProject: (name: string, description: string) => Promise<void>;
-  deleteProjectById: (projectId: number) => Promise<void>;
+  deleteProjectById: (projectId: string) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
@@ -99,21 +99,22 @@ const useProjectStore = create<ProjectState>((set) => ({
       });
     }
   },
-  deleteProjectById: async (projectId: number) => {
+  deleteProjectById: async (projectId: string) => {
     set({ loading: true, error: null });
 
     try {
-      const payload = await deleteProject(projectId);
+      await deleteProject(projectId);
 
-      set({
+      set((state) => ({
+        projects: state.projects.filter((project) => project._id !== projectId),
         loading: false,
         error: null,
-      });
+      }));
     } catch (error: unknown) {
       set({
         loading: false,
         error:
-          error instanceof Error ? error.message : "Error creating new project",
+          error instanceof Error ? error.message : "Error Deleting project",
       });
     }
   },

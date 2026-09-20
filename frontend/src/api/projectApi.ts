@@ -10,7 +10,7 @@ export const createProject = async (name: string, description: string) => {
   return data.data;
 };
 
-export const deleteProject = async (projectId: number) => {
-  const response = await api.delete(`/api/projects/${projectId}`);
+export const deleteProject = async (projectId: string) => {
+  const response = await api.delete(`/projects/${projectId}`);
   return response.data;
 };

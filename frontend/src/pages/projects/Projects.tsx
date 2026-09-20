@@ -70,7 +70,13 @@ function statusStyle(status: ProjectStatus) {
   return "bg-emerald-400/10 text-emerald-300";
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({
+  project,
+  deleteProjectById,
+}: {
+  project: Project;
+  deleteProjectById: (projectId: string) => Promise<void>;
+}) {
   const colors = colorStyles[project.color];
   const [openOptions, setOpenOptions] = useState(false);
 
@@ -122,10 +128,7 @@ function ProjectCard({ project }: { project: Project }) {
             </button>
             <button
               type="button"
-              onClick={() => {
-                console.log(`Delete project ${project.name}`);
-                setOpenOptions(false);
-              }}
+              onClick={() => deleteProjectById(project._id)}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
               role="menuitem"
             >
@@ -191,7 +194,7 @@ const Projects = () => {
     useState<(typeof statusOptions)[number]>("All projects");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const { projects, fetchProjects } = useProjectStore();
+  const { projects, fetchProjects, deleteProjectById } = useProjectStore();
 
   useEffect(() => {
     fetchProjects();
@@ -321,7 +324,11 @@ const Projects = () => {
           }
         >
           {filteredProjects?.map((project) => (
-            <ProjectCard key={project.name} project={project} />
+            <ProjectCard
+              key={project.name}
+              project={project}
+              deleteProjectById={deleteProjectById}
+            />
           ))}
         </section>
       ) : (
