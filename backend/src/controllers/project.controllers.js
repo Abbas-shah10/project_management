@@ -78,6 +78,13 @@ const getProjects = asyncHandler(async (req, res) => {
         members: "$projectDetails.allMembers", // Contains full array of members with user details
         currentUserRole: "$role" // Remembers the logged-in user's role in this project
       }
+    },
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        role: 1,
+      }
     }
   ]);
 
