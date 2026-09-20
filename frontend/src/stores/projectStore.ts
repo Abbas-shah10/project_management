@@ -3,6 +3,7 @@ import {
   getAllProjects,
   createProject,
   deleteProject,
+  updateProject,
 } from "../api/projectApi";
 
 interface Project {
@@ -49,6 +50,10 @@ interface ProjectState {
   fetchProjects: () => Promise<void>;
   createNewProject: (name: string, description: string) => Promise<void>;
   deleteProjectById: (projectId: string) => Promise<void>;
+  updateProjectById: (
+    projectId: string,
+    payload: { name: string; description: string },
+  ) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
@@ -107,6 +112,32 @@ const useProjectStore = create<ProjectState>((set) => ({
 
       set((state) => ({
         projects: state.projects.filter((project) => project._id !== projectId),
+        loading: false,
+        error: null,
+      }));
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error ? error.message : "Error Deleting project",
+      });
+    }
+  },
+  updateProjectById: async (
+    projectId: string,
+    payload: { name: string; description: string },
+  ) => {
+    set({ loading: true, error: null });
+
+    try {
+      const data = await updateProject(projectId, payload);
+
+      set((state) => ({
+        projects: state.projects.map((project) =>
+          project._id !== projectId
+            ? { ...project, ...(data || data.project) }
+            : project,
+        ),
         loading: false,
         error: null,
       }));

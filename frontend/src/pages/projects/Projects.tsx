@@ -16,10 +16,11 @@ import {
 } from "lucide-react";
 import useProjectStore from "../../stores/projectStore";
 import CreateProjectModal from "./CreateProject";
+import EditProject from "./EditProject";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
-interface Project {
+export interface Project {
   _id: number | string;
   name: string;
   description: string;
@@ -73,118 +74,133 @@ function statusStyle(status: ProjectStatus) {
 function ProjectCard({
   project,
   deleteProjectById,
+  updateProjectById,
 }: {
   project: Project;
   deleteProjectById: (projectId: string) => Promise<void>;
+  updateProjectById: (
+    projectId: string,
+    payload: { name: string; description: string },
+  ) => Promise<void>;
 }) {
   const colors = colorStyles[project.color];
   const [openOptions, setOpenOptions] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   return (
-    <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
-      <div className="flex items-start justify-between gap-4">
-        <div
-          className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors?.icon}`}
-        >
-          <FolderKanban size={20} />
-        </div>
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setOpenOptions((isOpen) => !isOpen)}
-            className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
-            aria-label={`More options for ${project.name}`}
-            aria-expanded={openOptions}
-            aria-haspopup="menu"
-          >
-            <MoreHorizontal size={19} />
-          </button>
-
+    <>
+      <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
+        <div className="flex items-start justify-between gap-4">
           <div
-            className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
-              openOptions
-                ? "translate-y-0 scale-100 opacity-100"
-                : "pointer-events-none -translate-y-2 scale-95 opacity-0"
-            }`}
-            role="menu"
-            aria-hidden={!openOptions}
+            className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors?.icon}`}
           >
-            <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Project actions
-            </p>
+            <FolderKanban size={20} />
+          </div>
+          <div className="relative">
             <button
               type="button"
-              onClick={() => {
-                console.log(`Edit project ${project.name}`);
-                setOpenOptions(false);
-              }}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
-              role="menuitem"
+              onClick={() => setOpenOptions((isOpen) => !isOpen)}
+              className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
+              aria-label={`More options for ${project.name}`}
+              aria-expanded={openOptions}
+              aria-haspopup="menu"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
-                <Pencil size={14} />
-              </span>
-              <span>Edit project</span>
+              <MoreHorizontal size={19} />
             </button>
-            <button
-              type="button"
-              onClick={() => deleteProjectById(project._id)}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
-              role="menuitem"
+
+            <div
+              className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
+                openOptions
+                  ? "translate-y-0 scale-100 opacity-100"
+                  : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+              }`}
+              role="menu"
+              aria-hidden={!openOptions}
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
-                <Trash2 size={14} />
-              </span>
-              <span>Delete project</span>
-            </button>
+              <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Project actions
+              </p>
+              <button
+                type="button"
+                onClick={() => setOpenEdit(true)}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                role="menuitem"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
+                  <Pencil size={14} />
+                </span>
+                <span>Edit project</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => deleteProjectById(project._id)}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
+                role="menuitem"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                  <Trash2 size={14} />
+                </span>
+                <span>Delete project</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-base font-semibold text-white">{project.name}</h2>
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${statusStyle(project.status)}`}
-          >
-            <CircleDashed size={11} /> {project.status}
+        <div className="mt-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-base font-semibold text-white">
+              {project.name}
+            </h2>
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${statusStyle(project.status)}`}
+            >
+              <CircleDashed size={11} /> {project.status}
+            </span>
+          </div>
+          <p className="mt-2 min-h-10 text-sm leading-5 text-slate-500">
+            {project.description}
+          </p>
+        </div>
+
+        <div className="mt-6 flex items-center justify-between text-xs">
+          <span className="text-slate-500">Progress</span>
+          <span className="font-semibold text-slate-200">
+            {project.progress}%
           </span>
         </div>
-        <p className="mt-2 min-h-10 text-sm leading-5 text-slate-500">
-          {project.description}
-        </p>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between text-xs">
-        <span className="text-slate-500">Progress</span>
-        <span className="font-semibold text-slate-200">
-          {project.progress}%
-        </span>
-      </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-        <span
-          className={`block h-full rounded-full ${colors?.bar}`}
-          style={{ width: `${project.progress}%` }}
-        />
-      </div>
-
-      <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-4">
-        <div className="flex -space-x-2">
-          {project.members?.map((member, index) => (
-            <span
-              key={member}
-              className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
-            >
-              {member}
-            </span>
-          ))}
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
+          <span
+            className={`block h-full rounded-full ${colors?.bar}`}
+            style={{ width: `${project.progress}%` }}
+          />
         </div>
-        <span className="text-xs text-slate-500">{project.tasks}</span>
-      </div>
-      <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-        <CalendarDays size={14} /> Due {project.dueLabel}
-      </div>
-    </article>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-4">
+          <div className="flex -space-x-2">
+            {project.members?.map((member, index) => (
+              <span
+                key={member}
+                className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
+              >
+                {member}
+              </span>
+            ))}
+          </div>
+          <span className="text-xs text-slate-500">{project.tasks}</span>
+        </div>
+        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+          <CalendarDays size={14} /> Due {project.dueLabel}
+        </div>
+      </article>
+
+      {openEdit && (
+        <EditProject
+          project={project}
+          onClose={() => setOpenEdit(false)}
+          onUpdated={updateProjectById}
+        />
+      )}
+    </>
   );
 }
 
@@ -194,7 +210,8 @@ const Projects = () => {
     useState<(typeof statusOptions)[number]>("All projects");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const { projects, fetchProjects, deleteProjectById } = useProjectStore();
+  const { projects, fetchProjects, deleteProjectById, updateProjectById } =
+    useProjectStore();
 
   useEffect(() => {
     fetchProjects();
@@ -328,6 +345,7 @@ const Projects = () => {
               key={project.name}
               project={project}
               deleteProjectById={deleteProjectById}
+              updateProjectById={updateProjectById}
             />
           ))}
         </section>
