@@ -37,8 +37,21 @@ const getProjects = asyncHandler(async (req, res) => {
                     from: 'users',
                     localField: 'user',
                     foreignField: '_id',
-                    as: 'userDetails'
-                  }
+                    as: 'userDetails',
+                    pipeline: [
+                      {
+                        $project: {
+                          password: 0,
+                          refreshToken: 0,
+                          _v: 0,
+                          emailVerificationExpiry: 0,
+                          emailVerificationToken: 0,
+                          isEmailVerified: 0,
+                        }
+                      }
+                    ]
+                  },
+
                 },
                 {
                   // Clean up user details array to an object
@@ -79,13 +92,6 @@ const getProjects = asyncHandler(async (req, res) => {
         currentUserRole: "$role" // Remembers the logged-in user's role in this project
       }
     },
-    {
-      $project: {
-        name: 1,
-        description: 1,
-        role: 1,
-      }
-    }
   ]);
 
 
