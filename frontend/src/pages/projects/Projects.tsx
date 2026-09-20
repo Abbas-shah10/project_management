@@ -17,11 +17,12 @@ import {
 import useProjectStore from "../../stores/projectStore";
 import CreateProjectModal from "./CreateProject";
 import EditProject from "./EditProject";
+import AddMembersToProject from "./AddMembersToProject";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
 export interface Project {
-  _id: number | string;
+  _id: string;
   name: string;
   description: string;
   status: ProjectStatus;
@@ -86,6 +87,7 @@ function ProjectCard({
   const colors = colorStyles[project.color];
   const [openOptions, setOpenOptions] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [addMembersOpen, setAddMembersOpen] = useState(false);
 
   return (
     <>
@@ -130,6 +132,17 @@ function ProjectCard({
                   <Pencil size={14} />
                 </span>
                 <span>Edit project</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAddMembersOpen(true)}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-green-300 transition hover:bg-green-400/10 hover:text-green-200"
+                role="menuitem"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                  <Plus size={14} />
+                </span>
+                <span>Add Members</span>
               </button>
               <button
                 type="button"
@@ -198,6 +211,13 @@ function ProjectCard({
           project={project}
           onClose={() => setOpenEdit(false)}
           onUpdated={updateProjectById}
+        />
+      )}
+
+      {addMembersOpen && (
+        <AddMembersToProject
+          project={project}
+          onClose={() => setAddMembersOpen(false)}
         />
       )}
     </>
