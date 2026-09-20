@@ -10,53 +10,77 @@ import { AvailableUserRole, UserRolesEnum } from '../utils/constants.js';
 const getProjects = asyncHandler(async (req, res) => {
   const projects = await ProjectMember.aggregate([
     {
+      // 1. Find only the projects where the logged-in user is a member
       $match: {
         user: new mongoose.Types.ObjectId(req.user._id),
       }
     },
     {
+      // 2. Pull the project details
       $lookup: {
         from: 'projects',
         localField: "project",
         foreignField: "_id",
-        as: 'projects',
+        as: 'projectDetails',
         pipeline: [
           {
+            // 2a. INSIDE the project, look up all its members
             $lookup: {
               from: 'projectmembers',
               localField: "_id",
-              foreignField: "projects",
-              as: "projectmembers",
+              foreignField: "project", // Fixed from 'projects' to 'project'
+              as: "allMembers",
+              pipeline: [
+                {
+                  // 2b. Grab the user details (name, email) for each member
+                  $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                  }
+                },
+                {
+                  // Clean up user details array to an object
+                  $addFields: {
+                    user: { $arrayElemAt: ["$userDetails", 0] }
+                  }
+                },
+                {
+                  // Remove the unneeded temporary array field
+                  $project: { userDetails: 0 }
+                }
+              ]
             }
           },
           {
+            // 2c. Add the member count total safely
             $addFields: {
-              members: {
-                $size: "$projectmembers",
-              }
+              memberCount: { $size: "$allMembers" }
             }
           }
         ]
       }
     },
     {
-      $unwind: "$projects"
+      // 3. Flatten the project details array
+      $unwind: "$projectDetails"
     },
     {
+      // 4. Shape the final output cleanly
       $project: {
-        project: {
-          _id: "$projects._id",
-          name: "$projects.name",
-          description: "$projects.description",
-          members: "$projects.members",
-          createdAt: "$projects.createdAt",
-          createdBy: "$projects.createdBy",
-        },
-        role: 1,
-        _id: 0
+        _id: "$projectDetails._id",
+        name: "$projectDetails.name",
+        description: "$projectDetails.description",
+        createdBy: "$projectDetails.createdBy",
+        createdAt: "$projectDetails.createdAt",
+        memberCount: "$projectDetails.memberCount",
+        members: "$projectDetails.allMembers", // Contains full array of members with user details
+        currentUserRole: "$role" // Remembers the logged-in user's role in this project
       }
     }
-  ])
+  ]);
+
 
   return res.status(200).json(
     new ApiResponse(200, { projects }, "Projects fetched successfully")
