@@ -22,3 +22,8 @@ export const updateProject = async (
   const response = await api.put(`/projects/${projectId}`, payload);
   return response.data;
 };
+
+export const getProjectById = async (id: string) => {
+  const response = await api.get(`/projects/${id}`);
+  response.data;
+};
