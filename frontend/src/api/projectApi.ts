@@ -1,8 +1,8 @@
 import api from "./axios";
 
 export const getAllProjects = async () => {
-  const { data } = await api.get("/projects");
-  return data.data;
+  const response = await api.get("/projects");
+  return response.data;
 };
 
 export const createProject = async (name: string, description: string) => {

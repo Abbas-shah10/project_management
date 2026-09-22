@@ -98,6 +98,8 @@ const useProjectStore = create<ProjectState>((set) => ({
 
     try {
       const data = await getAllProjects();
+      console.log(data);
+
       set({
         projects: Array.isArray(data?.projects)
           ? data.projects.map((project: ProjectApiData) =>
