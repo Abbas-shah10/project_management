@@ -20,10 +20,40 @@ interface Project {
   color: string;
 }
 
+type ProjectApiMember = {
+  _id?: string;
+  user?:
+    | string
+    | { fullName?: string; username?: string; email?: string; _id?: string };
+};
+
+type ProjectApiData = Partial<Project> & {
+  _id?: string;
+  members?: Array<string | ProjectApiMember>;
+  currentUserRole?: string;
+};
+
 type ProjectApiRecord = {
-  project: Partial<Project> & { _id?: string };
+  project: ProjectApiData;
   role?: string;
 };
+
+function getMemberLabel(member: string | ProjectApiMember): string {
+  if (typeof member === "string") return member;
+
+  if (typeof member.user === "object" && member.user) {
+    return (
+      member.user.fullName ||
+      member.user.username ||
+      member.user.email ||
+      member.user._id ||
+      member._id ||
+      "?"
+    );
+  }
+
+  return member._id || "?";
+}
 
 function normalizeProject(record: ProjectApiRecord): Project {
   const project = record.project;
@@ -38,7 +68,9 @@ function normalizeProject(record: ProjectApiRecord): Project {
     dueLabel: project.dueLabel || "No due date",
     tasks: project.tasks || "0 tasks",
     team: project.team || record.role || "No team",
-    members: Array.isArray(project.members) ? project.members : [],
+    members: Array.isArray(project.members)
+      ? project.members.map(getMemberLabel)
+      : [],
     color: project.color || "sky",
   };
 }
@@ -66,9 +98,15 @@ const useProjectStore = create<ProjectState>((set) => ({
 
     try {
       const data = await getAllProjects();
-
       set({
-        projects: (data?.projects || []).map(normalizeProject),
+        projects: Array.isArray(data?.projects)
+          ? data.projects.map((project: ProjectApiData) =>
+              normalizeProject({
+                project,
+                role: project.currentUserRole,
+              }),
+            )
+          : [],
         loading: false,
         error: null,
       });
