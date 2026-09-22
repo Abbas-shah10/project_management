@@ -33,11 +33,6 @@ type ProjectApiData = Partial<Project> & {
   currentUserRole?: string;
 };
 
-type ProjectApiRecord = {
-  project: ProjectApiData;
-  role?: string;
-};
-
 function getMemberLabel(member: string | ProjectApiMember): string {
   if (typeof member === "string") return member;
 
@@ -55,9 +50,7 @@ function getMemberLabel(member: string | ProjectApiMember): string {
   return member._id || "?";
 }
 
-function normalizeProject(record: ProjectApiRecord): Project {
-  const project = record.project;
-
+function normalizeProject(project: ProjectApiData): Project {
   return {
     _id: project._id || crypto.randomUUID(),
     name: project.name || "Untitled project",
@@ -67,7 +60,7 @@ function normalizeProject(record: ProjectApiRecord): Project {
     due: project.due || "",
     dueLabel: project.dueLabel || "No due date",
     tasks: project.tasks || "0 tasks",
-    team: project.team || record.role || "No team",
+    team: project.team || project.currentUserRole || "No team",
     members: Array.isArray(project.members)
       ? project.members.map(getMemberLabel)
       : [],
@@ -94,20 +87,14 @@ const useProjectStore = create<ProjectState>((set) => ({
   error: null,
 
   fetchProjects: async () => {
-    set({ loading: true, error: "" });
+    set({ loading: true, error: null });
 
     try {
       const data = await getAllProjects();
-      console.log(data);
 
       set({
         projects: Array.isArray(data?.projects)
-          ? data.projects.map((project: ProjectApiData) =>
-              normalizeProject({
-                project,
-                role: project.currentUserRole,
-              }),
-            )
+          ? data.projects.map(normalizeProject)
           : [],
         loading: false,
         error: null,
@@ -128,10 +115,7 @@ const useProjectStore = create<ProjectState>((set) => ({
 
       set((state) => ({
         projects: payload?.project
-          ? [
-              ...(state.projects || []),
-              normalizeProject({ project: payload.project }),
-            ]
+          ? [...(state.projects || []), normalizeProject(payload.project)]
           : state.projects || [],
         loading: false,
         error: null,
@@ -174,8 +158,8 @@ const useProjectStore = create<ProjectState>((set) => ({
 
       set((state) => ({
         projects: state.projects.map((project) =>
-          project._id !== projectId
-            ? { ...project, ...(data || data.project) }
+          project._id === projectId
+            ? { ...project, ...normalizeProject(data.project) }
             : project,
         ),
         loading: false,
