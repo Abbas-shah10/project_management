@@ -80,7 +80,11 @@ interface ProjectState {
     projectId: string,
     payload: { name: string; description: string },
   ) => Promise<void>;
-  AddMembersToProject: (projectId: string, email: string) => Promise<void>;
+  AddMembersToProject: (
+    projectId: string,
+    email: string,
+    role: "member" | "admin" | "project_admin",
+  ) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
@@ -175,13 +179,17 @@ const useProjectStore = create<ProjectState>((set) => ({
       });
     }
   },
-  AddMembersToProject: async (projectId: string, email: string) => {
+  AddMembersToProject: async (
+    projectId: string,
+    email: string,
+    role: "member" | "admin" | "project_admin",
+  ) => {
     set({ loading: true, error: null });
     try {
-      const data = await addMembersToProject(projectId, email);
+      const data = await addMembersToProject(projectId, email, role);
 
       set({
-        projects: data.projects || data.projects || data.data || [],
+        projects: data.projects || data.projects,
         loading: false,
         error: null,
       });

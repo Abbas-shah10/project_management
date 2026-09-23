@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/authStore";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Login = () => {
 
     try {
       await login(email, password);
-      alert("User login successfully");
+      toast.success("User login successfully");
       navigate("/");
     } catch (error: any) {
       console.log("error logging user", error.message);

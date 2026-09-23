@@ -12,13 +12,15 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
   const [role, setRole] = useState<"member" | "admin" | "project_admin">(
     "member",
   );
+  const [loading, setLoading] = useState(false);
   const { AddMembersToProject } = useProjectStore();
-
+  console.log(project);
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
 
     try {
-      await AddMembersToProject(project._id, email);
+      await AddMembersToProject(project._id, email, role);
       toast.success("User added to project successfully");
     } catch (error: any) {
       console.log("Error adding members");
@@ -84,7 +86,7 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
             >
               <option value="member">Member</option>
               <option value="admin">Admin</option>
-              <option value="admin">Project Admin</option>
+              <option value="project_admin">Project Admin</option>
             </select>
           </div>
 
@@ -100,7 +102,7 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
               type="submit"
               className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
             >
-              Add member
+              {loading ? "Adding Member" : "Add Member"}
             </button>
           </div>
         </form>
