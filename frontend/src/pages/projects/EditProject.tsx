@@ -47,7 +47,7 @@ const EditProject = ({ project, onClose, onUpdated }: EditProjectProps) => {
     >
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg space-y-5 rounded-lg bg-white p-6 text-gray-900 shadow-xl"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-lg space-y-5 overflow-y-auto rounded-lg bg-white p-4 text-gray-900 shadow-xl sm:p-6"
       >
         <div className="flex items-center justify-between">
           <h2 id="edit-project-title" className="text-xl font-semibold">
@@ -63,7 +63,7 @@ const EditProject = ({ project, onClose, onUpdated }: EditProjectProps) => {
           </button>
         </div>
 
-        <div className="max-h-[60vh] space-y-4 overflow-y-auto">
+        <div className="space-y-4">
           <label className="block text-sm font-medium text-gray-700">
             <input
               name="name"
@@ -85,7 +85,7 @@ const EditProject = ({ project, onClose, onUpdated }: EditProjectProps) => {
           </label>
         </div>
 
-        <div className="flex justify-end gap-3 border-t pt-4">
+        <div className="flex flex-col-reverse justify-end gap-3 border-t pt-4 sm:flex-row">
           <button
             type="button"
             onClick={onClose}

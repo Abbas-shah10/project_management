@@ -69,13 +69,13 @@ const activity = [
 function ProgressRing({ value }: { value: number }) {
   return (
     <div
-      className="relative flex h-36 w-36 items-center justify-center rounded-full"
+      className="relative flex h-28 w-28 shrink-0 items-center justify-center rounded-full sm:h-36 sm:w-36"
       style={{
         background: `conic-gradient(#fb7185 ${value}%, #334155 0)`,
       }}
     >
-      <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-slate-900">
-        <span className="text-3xl font-semibold tracking-tight text-white">
+      <div className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-slate-900 sm:h-28 sm:w-28">
+        <span className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           {value}%
         </span>
         <span className="text-[11px] uppercase tracking-[0.2em] text-slate-500">
@@ -210,7 +210,7 @@ const Home = () => {
               </small>
             </div>
           </div>
-          <div className="mt-8 flex gap-6 border-t border-slate-800 pt-4 text-xs text-slate-400">
+          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 border-t border-slate-800 pt-4 text-xs text-slate-400">
             <span className="flex items-center gap-2">
               <i className="h-2 w-2 rounded-full bg-rose-400" /> Completed{" "}
               <b className="text-white">84</b>
@@ -239,12 +239,12 @@ const Home = () => {
             </button>
           </div>
           <div className="mt-6 divide-y divide-slate-800">
-            <div className="flex items-center gap-3 py-4 first:pt-0">
+            <div className="flex items-start gap-3 py-4 first:pt-0">
               <span className="w-11 shrink-0 text-xs font-semibold text-slate-500">
                 09:30
               </span>
-              <div>
-                <strong className="text-sm font-medium text-slate-200">
+              <div className="min-w-0 flex-1">
+                <strong className="block wrap-break-word text-sm font-medium text-slate-200">
                   Team stand-up
                 </strong>
                 <p className="mt-1 text-xs text-slate-500">
@@ -252,39 +252,39 @@ const Home = () => {
                   <span className="text-emerald-300">+8 attendees</span>
                 </p>
               </div>
-              <span className="ml-auto rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+              <span className="shrink-0 rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
                 Live
               </span>
             </div>
-            <div className="flex items-center gap-3 py-4">
+            <div className="flex items-start gap-3 py-4">
               <span className="w-11 shrink-0 text-xs font-semibold text-slate-500">
                 11:00
               </span>
-              <div>
-                <strong className="text-sm font-medium text-slate-200">
+              <div className="min-w-0 flex-1">
+                <strong className="block wrap-break-word text-sm font-medium text-slate-200">
                   Review homepage concepts
                 </strong>
                 <p className="mt-1 text-xs text-slate-500">
                   Website redesign · 45 min
                 </p>
               </div>
-              <span className="ml-auto rounded-full bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              <span className="shrink-0 rounded-full bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                 Work
               </span>
             </div>
-            <div className="flex items-center gap-3 py-4 last:pb-0">
+            <div className="flex items-start gap-3 py-4 last:pb-0">
               <span className="w-11 shrink-0 text-xs font-semibold text-slate-500">
                 15:30
               </span>
-              <div>
-                <strong className="text-sm font-medium text-slate-200">
+              <div className="min-w-0 flex-1">
+                <strong className="block wrap-break-word text-sm font-medium text-slate-200">
                   Product roadmap review
                 </strong>
                 <p className="mt-1 text-xs text-slate-500">
                   Mobile app launch · 1 hr
                 </p>
               </div>
-              <span className="ml-auto rounded-full bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              <span className="shrink-0 rounded-full bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                 Work
               </span>
             </div>
@@ -325,14 +325,14 @@ const Home = () => {
                 className="grid gap-3 py-4 sm:grid-cols-[1.4fr_1fr_0.8fr_0.55fr] sm:items-center sm:gap-4"
                 key={project.name}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <span
                     className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${project.color === "coral" ? "bg-rose-400/15 text-rose-300" : project.color === "lime" ? "bg-lime-400/15 text-lime-300" : "bg-sky-400/15 text-sky-300"}`}
                   >
                     <FolderKanban size={16} />
                   </span>
-                  <div>
-                    <strong className="block text-sm font-medium text-slate-200">
+                  <div className="min-w-0">
+                    <strong className="block wrap-break-word text-sm font-medium text-slate-200">
                       {project.name}
                     </strong>
                     <small className="mt-1 block text-xs text-slate-500">
@@ -357,7 +357,9 @@ const Home = () => {
                   <CircleDashed size={13} />
                   {project.status}
                 </span>
-                <span className="text-xs text-slate-400">{project.due}</span>
+                <span className="text-xs text-slate-400 sm:whitespace-nowrap">
+                  {project.due}
+                </span>
               </div>
             ))}
           </div>
@@ -387,7 +389,7 @@ const Home = () => {
                 >
                   {item.initials}
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm leading-5 text-slate-400">
                     <strong className="font-medium text-slate-200">
                       {item.person}

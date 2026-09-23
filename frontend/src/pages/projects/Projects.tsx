@@ -159,9 +159,9 @@ function ProjectCard({
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-5 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-semibold text-white">
+            <h2 className="wrap-break-word text-base font-semibold text-white">
               {project.name}
             </h2>
             <span
@@ -170,7 +170,7 @@ function ProjectCard({
               <CircleDashed size={11} /> {project.status}
             </span>
           </div>
-          <p className="mt-2 min-h-10 text-sm leading-5 text-slate-500">
+          <p className="mt-2 min-h-10 wrap-break-word text-sm leading-5 text-slate-500">
             {project.description}
           </p>
         </div>
@@ -188,8 +188,8 @@ function ProjectCard({
           />
         </div>
 
-        <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-4">
-          <div className="flex -space-x-2">
+        <div className="mt-5 flex min-w-0 items-center justify-between gap-3 border-t border-slate-800 pt-4">
+          <div className="flex min-w-0 max-w-[70%] -space-x-2 overflow-hidden">
             {project.members?.map((member, index) => (
               <span
                 key={member}
@@ -199,9 +199,11 @@ function ProjectCard({
               </span>
             ))}
           </div>
-          <span className="text-xs text-slate-500">{project.tasks}</span>
+          <span className="shrink-0 text-right text-xs text-slate-500">
+            {project.tasks}
+          </span>
         </div>
-        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
           <CalendarDays size={14} /> Due {project.dueLabel}
         </div>
       </article>
@@ -316,7 +318,7 @@ const Projects = () => {
             className="h-10 w-full rounded-xl border border-slate-800 bg-slate-950/60 pl-9 pr-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-rose-400/60"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <SlidersHorizontal size={16} className="mr-1 text-slate-600" />
           <div className="relative">
             <select
@@ -324,7 +326,7 @@ const Projects = () => {
               onChange={(event) =>
                 setStatus(event.target.value as (typeof statusOptions)[number])
               }
-              className="h-10 appearance-none rounded-xl border border-slate-800 bg-slate-950/60 py-2 pl-3 pr-8 text-xs font-medium text-slate-300 outline-none focus:border-rose-400/60"
+              className="h-10 max-w-full appearance-none rounded-xl border border-slate-800 bg-slate-950/60 py-2 pl-3 pr-8 text-xs font-medium text-slate-300 outline-none focus:border-rose-400/60"
             >
               {statusOptions.map((option) => (
                 <option key={option}>{option}</option>

@@ -47,10 +47,10 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: SidebarProps) {
   return (
     <aside
       className={`
-        sticky top-0 flex h-screen shrink-0 flex-col border-r border-slate-800
+        fixed inset-y-0 left-0 z-40 flex h-screen w-64 shrink-0 flex-col border-r border-slate-800
         bg-slate-950 text-white
-        transition-all duration-300
-        ${sidebarOpen ? "w-64" : "w-20"}
+        transition-all duration-300 md:sticky md:top-0 md:z-auto md:translate-x-0
+        ${sidebarOpen ? "translate-x-0 md:w-64" : "-translate-x-full md:w-20"}
       `}
     >
       {/* Logo */}

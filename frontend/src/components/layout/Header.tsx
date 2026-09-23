@@ -1,12 +1,24 @@
-import { Bell, ChevronDown, Search, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search, Sparkles } from "lucide-react";
 import useAuthStore from "../../stores/authStore";
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const user = useAuthStore((state) => state.user);
   const initials = user?.username?.charAt(0).toUpperCase() || "A";
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 text-white sm:px-6">
+    <header className="flex h-16 w-full shrink-0 items-center gap-2 border-b border-slate-800 bg-slate-950 px-3 text-white sm:gap-4 sm:px-6">
+      <button
+        type="button"
+        aria-label="Open navigation"
+        onClick={onMenuClick}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-900 hover:text-white md:hidden"
+      >
+        <Menu size={19} />
+      </button>
       <div className="hidden items-center gap-3 md:flex">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
           <Sparkles size={17} />
@@ -20,7 +32,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="relative w-full max-w-md md:mx-8">
+      <div className="relative min-w-0 flex-1 md:mx-8 md:max-w-md">
         <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
         <input
           type="text"

@@ -30,7 +30,7 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <div className="max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-xl bg-white p-4 shadow-xl sm:p-6">
         <div className="mb-6 flex items-start justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">Add member</h2>
@@ -90,7 +90,7 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
             </select>
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
+          <div className="flex flex-col-reverse justify-end gap-3 border-t border-slate-100 pt-5 sm:flex-row">
             <button
               type="button"
               onClick={onClose}
