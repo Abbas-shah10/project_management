@@ -20,7 +20,9 @@ export default function AppLayout() {
         />
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div
+        className={`flex min-w-0 flex-1 flex-col overflow-hidden transition-[margin] duration-300 ${sidebarOpen ? "md:ml-64" : "md:ml-20"}`}
+      >
         <Header onMenuClick={toggleSidebar} />
 
         <main className="flex-1 overflow-auto bg-slate-950 p-4 text-white sm:p-6 lg:p-8">
