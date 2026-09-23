@@ -193,7 +193,7 @@ function ProjectCard({
             {project.members?.map((member, index) => (
               <span
                 key={member}
-                className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
               >
                 {member}
               </span>
