@@ -180,15 +180,11 @@ const useProjectStore = create<ProjectState>((set) => ({
     try {
       const data = await addMembersToProject(projectId, email);
 
-      set((state) => ({
-        projects: state.projects.map((project) =>
-          project._id === projectId
-            ? { ...project, ...normalizeProject(data.project) }
-            : project,
-        ),
+      set({
+        projects: data.projects || data.projects || data.data || [],
         loading: false,
         error: null,
-      }));
+      });
     } catch (error: unknown) {
       set({
         loading: false,
