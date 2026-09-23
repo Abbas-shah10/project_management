@@ -4,6 +4,7 @@ import {
   createProject,
   deleteProject,
   updateProject,
+  addMembersToProject,
 } from "../api/projectApi";
 
 interface Project {
@@ -79,6 +80,7 @@ interface ProjectState {
     projectId: string,
     payload: { name: string; description: string },
   ) => Promise<void>;
+  AddMembersToProject: (projectId: string, email: string) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
@@ -170,6 +172,30 @@ const useProjectStore = create<ProjectState>((set) => ({
         loading: false,
         error:
           error instanceof Error ? error.message : "Error Deleting project",
+      });
+    }
+  },
+  AddMembersToProject: async (projectId: string, email: string) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await addMembersToProject(projectId, email);
+
+      set((state) => ({
+        projects: state.projects.map((project) =>
+          project._id === projectId
+            ? { ...project, ...normalizeProject(data.project) }
+            : project,
+        ),
+        loading: false,
+        error: null,
+      }));
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Error adding member to project",
       });
     }
   },
