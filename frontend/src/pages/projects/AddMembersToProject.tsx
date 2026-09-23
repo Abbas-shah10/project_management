@@ -1,5 +1,7 @@
+import useProjectStore from "../../stores/projectStore";
 import type { Project } from "./Projects";
 import { useState, type FormEvent } from "react";
+import { toast } from "react-toastify";
 
 interface AddMembersProps {
   onClose: () => void;
@@ -7,10 +9,21 @@ interface AddMembersProps {
 }
 const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"member" | "admin">("member");
+  const [role, setRole] = useState<"member" | "admin" | "project_admin">(
+    "member",
+  );
+  const { AddMembersToProject } = useProjectStore();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    try {
+      await AddMembersToProject(project._id, email);
+      toast.success("User added to project successfully");
+    } catch (error: any) {
+      console.log("Error adding members");
+      toast.error("Error adding user to project", error);
+    }
   };
 
   return (
@@ -63,12 +76,15 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
               id="member-role"
               value={role}
               onChange={(event) =>
-                setRole(event.target.value as "member" | "admin")
+                setRole(
+                  event.target.value as "member" | "admin" | "project_admin",
+                )
               }
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
             >
               <option value="member">Member</option>
               <option value="admin">Admin</option>
+              <option value="admin">Project Admin</option>
             </select>
           </div>
 
