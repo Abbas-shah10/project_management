@@ -5,6 +5,7 @@ import Projects from "../pages/projects/Projects";
 import Login from "../pages/auth/Login";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Signup from "../pages/auth/Signup";
+import ProjectDetails from "../pages/projects/ProjectDetails";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectDetails />} />
         </Route>
       </Route>
     </Routes>
