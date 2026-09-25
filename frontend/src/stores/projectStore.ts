@@ -208,10 +208,9 @@ const useProjectStore = create<ProjectState>((set) => ({
   deleteMemberById: async (projectId: string, userId: string) => {
     set({ loading: true, error: null });
     try {
-      const data = await deleteMember(projectId, userId);
+      await deleteMember(projectId, userId);
 
       set({
-        projects: data.projects || data.projects,
         loading: false,
         error: null,
       });
