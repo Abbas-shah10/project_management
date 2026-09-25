@@ -18,6 +18,7 @@ import useProjectStore from "../../stores/projectStore";
 import CreateProjectModal from "./CreateProject";
 import EditProject from "./EditProject";
 import AddMembersToProject from "./AddMembersToProject";
+import { Link } from "react-router-dom";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
@@ -162,7 +163,12 @@ function ProjectCard({
         <div className="mt-5 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="wrap-break-word text-base font-semibold text-white">
-              {project.name}
+              <Link
+                to={`/projects/${project._id}`}
+                className="transition hover:text-rose-300"
+              >
+                {project.name}
+              </Link>
             </h2>
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${statusStyle(project.status)}`}

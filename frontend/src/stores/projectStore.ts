@@ -6,6 +6,7 @@ import {
   updateProject,
   addMembersToProject,
   deleteMember,
+  getProjectById,
 } from "../api/projectApi";
 
 interface Project {
@@ -93,6 +94,7 @@ const useProjectStore = create<ProjectState>((set) => ({
   projects: [],
   loading: false,
   error: null,
+  project: null,
 
   fetchProjects: async () => {
     set({ loading: true, error: null });
