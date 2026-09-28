@@ -88,13 +88,14 @@ interface ProjectState {
     role: "member" | "admin" | "project_admin",
   ) => Promise<void>;
   deleteMemberById: (projectId: string, userId: string) => Promise<void>;
+  fetchProjectById: (projectId: string) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectState>((set) => ({
   projects: [],
   loading: false,
   error: null,
-  project: null,
+  project: [],
 
   fetchProjects: async () => {
     set({ loading: true, error: null });
@@ -213,6 +214,26 @@ const useProjectStore = create<ProjectState>((set) => ({
       await deleteMember(projectId, userId);
 
       set({
+        loading: false,
+        error: null,
+      });
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Error removing member from project",
+      });
+    }
+  },
+  fetchProjectById: async (projectId: string) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await getProjectById(projectId);
+
+      set({
+        project: data.project || [],
         loading: false,
         error: null,
       });
