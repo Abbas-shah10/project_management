@@ -234,7 +234,7 @@ const useProjectStore = create<ProjectState>((set) => ({
       const data = await getProjectById(projectId);
 
       set({
-        project: data.project || [],
+        project: data.project || {},
         loading: false,
         error: null,
       });
