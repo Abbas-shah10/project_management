@@ -24,7 +24,7 @@ const ProjectDetails = () => {
   }, [fetchProjectById, id]);
   console.log(project);
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <a
           href="/projects"
@@ -36,7 +36,7 @@ const ProjectDetails = () => {
           <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
             <div>
               <p className="text-sm font-medium text-indigo-600">
-                Project {id ? `#${id}` : "overview"}
+                Project Overview
               </p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">
                 {project?.name}
@@ -136,35 +136,25 @@ const ProjectDetails = () => {
               People working on this project
             </p>
             <ul className="mt-5 space-y-4">
-              {[
-                {
-                  initials: "AM",
-                  name: "Alex Morgan",
-                  role: "Project lead",
-                  color: "bg-indigo-100 text-indigo-700",
-                },
-                {
-                  initials: "JL",
-                  name: "Jamie Lee",
-                  role: "Designer",
-                  color: "bg-rose-100 text-rose-700",
-                },
-                {
-                  initials: "TK",
-                  name: "Taylor Kim",
-                  role: "Developer",
-                  color: "bg-amber-100 text-amber-700",
-                },
-              ].map((member) => (
-                <li key={member.name} className="flex items-center gap-3">
+              {project?.members.map((member) => (
+                <li
+                  key={typeof member === "string" ? member : member._id}
+                  className="flex items-center gap-3"
+                >
                   <span
-                    className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${member.color}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${typeof member === "string" ? "bg-slate-100 text-slate-600" : member.color}`}
                   >
-                    {member.initials}
+                    {member.user?.username.charAt(0).toUpperCase()}
                   </span>
                   <div>
-                    <p className="text-sm font-semibold">{member.name}</p>
-                    <p className="text-xs text-slate-500">{member.role}</p>
+                    <p className="text-sm font-semibold">
+                      {typeof member === "string"
+                        ? member
+                        : member.user?.username || ""}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {typeof member === "string" ? "" : member.user?.role}
+                    </p>
                   </div>
                 </li>
               ))}
