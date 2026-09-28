@@ -2,10 +2,21 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useProjectStore from "../../stores/projectStore";
 
-const ProjectDetails = () => {
-  const { fetchProjectById, project } = useProjectStore();
-  const { id } = useParams();
+const formatProjectTime = (value: unknown): string => {
+  if (value === undefined || value === null || value === "") return "—";
 
+  const date = new Date(value as string | number | Date);
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return date.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+};
+
+const ProjectDetails = () => {
+  const { id } = useParams();
+  const { fetchProjectById, project } = useProjectStore();
   useEffect(() => {
     if (id) {
       fetchProjectById(id);
@@ -28,7 +39,7 @@ const ProjectDetails = () => {
                 Project {id ? `#${id}` : "overview"}
               </p>
               <h1 className="mt-2 text-3xl font-bold tracking-tight">
-                Website redesign
+                {project?.name}
               </h1>
               <p className="mt-3 max-w-2xl text-slate-600">
                 Refresh the product experience with clearer navigation, an
@@ -37,7 +48,7 @@ const ProjectDetails = () => {
             </div>
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              In progress
+              {project?.status}
             </span>
           </div>
           <div className="mt-8 grid gap-6 border-t border-slate-100 pt-6 sm:grid-cols-3">
@@ -45,13 +56,15 @@ const ProjectDetails = () => {
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Project lead
               </p>
-              <p className="mt-2 font-medium">Alex Morgan</p>
+              <p className="mt-2 font-medium">{project?.team}</p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Timeline
               </p>
-              <p className="mt-2 font-medium">May 12 – Jul 30, 2025</p>
+              <p className="mt-2 font-medium">
+                {formatProjectTime(project?.createdAt)}
+              </p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
