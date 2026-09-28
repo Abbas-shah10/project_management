@@ -73,6 +73,7 @@ function normalizeProject(project: ProjectApiData): Project {
 
 interface ProjectState {
   projects: Project[];
+  project: Project | null;
   loading: boolean;
   error: string | null;
   fetchProjects: () => Promise<void>;
@@ -93,9 +94,9 @@ interface ProjectState {
 
 const useProjectStore = create<ProjectState>((set) => ({
   projects: [],
+  project: null,
   loading: false,
   error: null,
-  project: [],
 
   fetchProjects: async () => {
     set({ loading: true, error: null });
