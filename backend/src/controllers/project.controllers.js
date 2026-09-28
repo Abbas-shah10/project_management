@@ -102,7 +102,55 @@ const getProjects = asyncHandler(async (req, res) => {
 const getProjectById = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
 
-  const project = await Project.findById(projectId)
+  const project = await Project.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(projectId) } },
+    {
+      $lookup: {
+        from: "projectmembers",
+        localField: "_id",
+        foreignField: "project",
+        as: "projectMembers"
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "projectMembers.user",
+        foreignField: "_id",
+        as: "memberUsers"
+      }
+    },
+    {
+      $addFields: {
+        members: {
+          $map: {
+            input: "$projectMembers",
+            as: "membership",
+            in: {
+              $mergeObjects: [
+                "$$membership",
+                {
+                  user: {
+                    $arrayElemAt: [
+                      {
+                        $filter: {
+                          input: "$memberUsers",
+                          as: "memberUser",
+                          cond: { $eq: ["$$memberUser._id", "$$membership.user"] }
+                        }
+                      },
+                      0
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    { $project: { projectMembers: 0, memberUsers: 0 } }
+  ]).then(([project]) => project)
 
   if (!project) {
     throw new ApiError(404, "Project not found");
