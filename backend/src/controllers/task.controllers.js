@@ -122,7 +122,31 @@ const updateTask = asyncHandler(async (req, res) => {
     new ApiResponse(200, 'Task updated successfully', updatedTask)
   );
 });
-const deleteTask = asyncHandler(async (req, res) => { });
+const deleteTask = asyncHandler(async (req, res) => {
+  const { taskId, projectId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    throw new ApiError(400, 'Invalid task id');
+  }
+
+  const taskFilter = projectId
+    ? { _id: taskId, project: projectId }
+    : { _id: taskId };
+
+  const task = await Task.findOne(taskFilter);
+
+  if (!task) {
+    throw new ApiError(404, 'Task not found');
+  }
+
+  await SubTask.deleteMany({ task: task._id });
+  await task.deleteOne();
+
+  return res.status(200).json(
+    new ApiResponse(200, 'Task deleted successfully', null)
+  );
+
+});
 const getTaskById = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
   const task = await Task.aggregate([
