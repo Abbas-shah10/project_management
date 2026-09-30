@@ -57,7 +57,71 @@ const createTask = asyncHandler(async (req, res) => {
   )
 
 });
-const updateTask = asyncHandler(async (req, res) => { });
+const updateTask = asyncHandler(async (req, res) => {
+  const { taskId, projectId } = req.params;
+  const {
+    title,
+    description,
+    assignedTo,
+    status,
+    removeAttachments,
+  } = req.body;
+
+  const task = await Task.findOne(
+    projectId ? { _id: taskId, project: projectId } : { _id: taskId }
+  );
+
+  if (!task) {
+    throw new ApiError(404, 'Task not found');
+  }
+
+  if (title !== undefined) task.title = title;
+  if (description !== undefined) task.description = description;
+  if (status !== undefined) task.status = status;
+
+  if (assignedTo !== undefined) {
+    if (assignedTo === null || assignedTo === '') {
+      task.assignedTo = undefined;
+    } else {
+      if (!mongoose.Types.ObjectId.isValid(assignedTo)) {
+        throw new ApiError(400, 'Invalid assigned user id');
+      }
+
+      task.assignedTo = new mongoose.Types.ObjectId(assignedTo);
+    }
+  }
+
+  if (req.files && req.files.length > 0) {
+    const newAttachments = req.files.map((file) => ({
+      url: `${process.env.SERVER_URL}/images/${file.originalname}`,
+      mimetype: file.mimetype,
+      size: file.size,
+    }));
+
+    task.attachments = [...(task.attachments || []), ...newAttachments];
+  }
+
+  if (removeAttachments !== undefined) {
+    const attachmentsToRemove = Array.isArray(removeAttachments)
+      ? removeAttachments
+      : [removeAttachments];
+
+    task.attachments = (task.attachments || []).filter(
+      (attachment) => !attachmentsToRemove.includes(String(attachment._id))
+    );
+  }
+
+  await task.save();
+
+  const updatedTask = await Task.findById(task._id).populate(
+    'assignedTo',
+    'avatar username fullName'
+  );
+
+  return res.status(200).json(
+    new ApiResponse(200, 'Task updated successfully', updatedTask)
+  );
+});
 const deleteTask = asyncHandler(async (req, res) => { });
 const getTaskById = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
