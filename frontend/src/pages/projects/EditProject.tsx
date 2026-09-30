@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import type { Project } from "./Projects";
 import { useState } from "react";
 
@@ -23,7 +24,7 @@ const EditProject = ({ project, onClose, onUpdated }: EditProjectProps) => {
         description: values.description,
       });
 
-      alert("project details updated successfully");
+      toast("project details updated successfully");
     } catch (err: any) {
       console.log(err.response.message || "Error updating the project details");
     }
