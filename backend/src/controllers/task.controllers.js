@@ -224,7 +224,34 @@ const getTaskById = asyncHandler(async (req, res) => {
   )
 
 });
-const createSubTask = asyncHandler(async (req, res) => { });
+const createSubTask = asyncHandler(async (req, res) => {
+  const { title, createdBy, isCompleted } = req.body;
+  const { taskId } = req.params;
+
+  if (title || createdBy) {
+    return ApiError(400, "All the given fields are required")
+  }
+
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    return ApiError(404, "Task not found")
+  }
+
+  const subTask = await SubTask.create({
+    title,
+    createdBy: createdBy ? new mongoose.Types.ObjectId(createdBy) : undefined,
+    task: new mongoose.Types.ObjectId(taskId),
+    isCompleted
+  })
+
+
+  return res.status(201).json(
+    new ApiResponse(201, 'SubTask created successfully', subTask)
+  )
+
+
+});
 const updateSubTask = asyncHandler(async (req, res) => { });
 const deleteSubTask = asyncHandler(async (req, res) => { });
 
