@@ -252,7 +252,24 @@ const createSubTask = asyncHandler(async (req, res) => {
 
 
 });
-const updateSubTask = asyncHandler(async (req, res) => { });
+const updateSubTask = asyncHandler(async (req, res) => {
+  const { subTaskId } = req.params;
+
+  const subTask = await SubTask.findById(subTaskId)
+
+  if (!subTask) {
+    return ApiError(404, "Sub-Task not found")
+  }
+
+  if (!subTask.isCompleted) {
+    subTask.isCompleted = true;
+    await subTask.save();
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, "Task status updated successfully", subTask)
+  )
+});
 const deleteSubTask = asyncHandler(async (req, res) => { });
 
 export {
