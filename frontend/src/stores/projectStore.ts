@@ -8,6 +8,7 @@ import {
   deleteMember,
   getProjectById,
 } from "../api/projectApi";
+import type { ProjectRole } from "../utils/permissions";
 
 interface Project {
   _id: string;
@@ -21,6 +22,7 @@ interface Project {
   team: string;
   members: string[];
   color: string;
+  currentUserRole?: ProjectRole;
 }
 
 type ProjectApiMember = {
@@ -30,11 +32,22 @@ type ProjectApiMember = {
     | { fullName?: string; username?: string; email?: string; _id?: string };
 };
 
-type ProjectApiData = Partial<Project> & {
+type ProjectApiData = Omit<Partial<Project>, "members"> & {
   _id?: string;
   members?: Array<string | ProjectApiMember>;
-  currentUserRole?: string;
+  currentUserRole?: ProjectRole;
 };
+
+interface ProjectDetail extends Omit<Partial<Project>, "members"> {
+  _id: string;
+  createdAt?: string;
+  members: Array<{
+    _id: string;
+    color?: string;
+    role?: ProjectRole;
+    user?: { username?: string; _id?: string };
+  }>;
+}
 
 function getMemberLabel(member: string | ProjectApiMember): string {
   if (typeof member === "string") return member;
@@ -64,6 +77,7 @@ function normalizeProject(project: ProjectApiData): Project {
     dueLabel: project.dueLabel || "No due date",
     tasks: project.tasks || "0 tasks",
     team: project.team || project.currentUserRole || "No team",
+    currentUserRole: project.currentUserRole,
     members: Array.isArray(project.members)
       ? project.members.map(getMemberLabel)
       : [],
@@ -73,7 +87,7 @@ function normalizeProject(project: ProjectApiData): Project {
 
 interface ProjectState {
   projects: Project[];
-  project: Project | null;
+  project: ProjectDetail | null;
   loading: boolean;
   error: string | null;
   fetchProjects: () => Promise<void>;
@@ -92,7 +106,7 @@ interface ProjectState {
   fetchProjectById: (projectId: string) => Promise<void>;
 }
 
-const useProjectStore = create<ProjectState>((set) => ({
+const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
   project: null,
   loading: false,
@@ -127,7 +141,13 @@ const useProjectStore = create<ProjectState>((set) => ({
 
       set((state) => ({
         projects: payload?.project
-          ? [...(state.projects || []), normalizeProject(payload.project)]
+          ? [
+              ...(state.projects || []),
+              normalizeProject({
+                ...payload.project,
+                currentUserRole: "admin",
+              }),
+            ]
           : state.projects || [],
         loading: false,
         error: null,
@@ -232,8 +252,19 @@ const useProjectStore = create<ProjectState>((set) => ({
     set({ loading: true, error: null });
     try {
       const data = await getProjectById(projectId);
+      let currentUserRole = get().projects.find(
+        (item) => item._id === projectId,
+      )?.currentUserRole;
+
+      if (!currentUserRole) {
+        const projectData = await getAllProjects();
+        currentUserRole = projectData?.projects?.find(
+          (item: ProjectApiData) => item._id === projectId,
+        )?.currentUserRole;
+      }
+
       set({
-        project: data || {},
+        project: data ? { ...data, currentUserRole } : null,
         loading: false,
         error: null,
       });

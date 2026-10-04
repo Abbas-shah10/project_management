@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useProjectStore from "../../stores/projectStore";
+import { canManageProject } from "../../utils/permissions";
 
 const formatProjectTime = (value: unknown): string => {
   if (value === undefined || value === null || value === "") return "—";
@@ -17,6 +18,7 @@ const formatProjectTime = (value: unknown): string => {
 const ProjectDetails = () => {
   const { id } = useParams();
   const { fetchProjectById, project } = useProjectStore();
+  const canManage = canManageProject(project?.currentUserRole);
   useEffect(() => {
     if (id) {
       fetchProjectById(id);
@@ -136,31 +138,26 @@ const ProjectDetails = () => {
             </p>
             <ul className="mt-5 space-y-4">
               {project?.members.map((member) => (
-                <li
-                  key={typeof member === "string" ? member : member._id}
-                  className="flex items-center gap-3"
-                >
+                <li key={member._id} className="flex items-center gap-3">
                   <span
-                    className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${typeof member === "string" ? "bg-slate-100 text-slate-600" : member.color}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-600 ${member.color || ""}`}
                   >
-                    {member.user?.username.charAt(0).toUpperCase()}
+                    {member.user?.username?.charAt(0).toUpperCase()}
                   </span>
                   <div>
                     <p className="text-sm font-semibold">
-                      {typeof member === "string"
-                        ? member
-                        : member.user?.username || ""}
+                      {member.user?.username || ""}
                     </p>
-                    <p className="text-xs text-slate-500">
-                      {typeof member === "string" ? "" : member.user?.role}
-                    </p>
+                    <p className="text-xs text-slate-500">{member.role}</p>
                   </div>
                 </li>
               ))}
             </ul>
-            <button className="mt-6 w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-              Manage team
-            </button>
+            {canManage && (
+              <button className="mt-6 w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                Manage team
+              </button>
+            )}
           </aside>
         </div>
       </div>

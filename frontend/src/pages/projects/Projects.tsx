@@ -19,6 +19,7 @@ import CreateProjectModal from "./CreateProject";
 import EditProject from "./EditProject";
 import AddMembersToProject from "./AddMembersToProject";
 import { Link } from "react-router-dom";
+import { canManageProject, type ProjectRole } from "../../utils/permissions";
 
 type ProjectStatus = "On track" | "At risk" | "Completed";
 
@@ -34,6 +35,7 @@ export interface Project {
   team: string;
   members: string[];
   color: string;
+  currentUserRole?: ProjectRole;
 }
 
 const statusOptions = [
@@ -86,6 +88,7 @@ function ProjectCard({
   ) => Promise<void>;
 }) {
   const colors = colorStyles[project.color];
+  const canManage = canManageProject(project.currentUserRole);
   const [openOptions, setOpenOptions] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [addMembersOpen, setAddMembersOpen] = useState(false);
@@ -99,65 +102,67 @@ function ProjectCard({
           >
             <FolderKanban size={20} />
           </div>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setOpenOptions((isOpen) => !isOpen)}
-              className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
-              aria-label={`More options for ${project.name}`}
-              aria-expanded={openOptions}
-              aria-haspopup="menu"
-            >
-              <MoreHorizontal size={19} />
-            </button>
+          {canManage && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setOpenOptions((isOpen) => !isOpen)}
+                className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
+                aria-label={`More options for ${project.name}`}
+                aria-expanded={openOptions}
+                aria-haspopup="menu"
+              >
+                <MoreHorizontal size={19} />
+              </button>
 
-            <div
-              className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
-                openOptions
-                  ? "translate-y-0 scale-100 opacity-100"
-                  : "pointer-events-none -translate-y-2 scale-95 opacity-0"
-              }`}
-              role="menu"
-              aria-hidden={!openOptions}
-            >
-              <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Project actions
-              </p>
-              <button
-                type="button"
-                onClick={() => setOpenEdit(true)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
-                role="menuitem"
+              <div
+                className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
+                  openOptions
+                    ? "translate-y-0 scale-100 opacity-100"
+                    : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+                }`}
+                role="menu"
+                aria-hidden={!openOptions}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
-                  <Pencil size={14} />
-                </span>
-                <span>Edit project</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setAddMembersOpen(true)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-green-300 transition hover:bg-green-400/10 hover:text-green-200"
-                role="menuitem"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
-                  <Plus size={14} />
-                </span>
-                <span>Add Members</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => deleteProjectById(project._id)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
-                role="menuitem"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
-                  <Trash2 size={14} />
-                </span>
-                <span>Delete project</span>
-              </button>
+                <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Project actions
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setOpenEdit(true)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                  role="menuitem"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
+                    <Pencil size={14} />
+                  </span>
+                  <span>Edit project</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAddMembersOpen(true)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-green-300 transition hover:bg-green-400/10 hover:text-green-200"
+                  role="menuitem"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                    <Plus size={14} />
+                  </span>
+                  <span>Add Members</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteProjectById(project._id)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
+                  role="menuitem"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                    <Trash2 size={14} />
+                  </span>
+                  <span>Delete project</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-5 min-w-0">

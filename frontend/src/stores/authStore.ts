@@ -6,12 +6,7 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (
-    username: string,
-    email: string,
-    password: string,
-    role: string,
-  ) => Promise<void>;
+  signup: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -48,14 +43,9 @@ const useAuthStore = create<AuthState>((set) => ({
       console.error("Login error:", error.message);
     }
   },
-  signup: async (
-    username: string,
-    email: string,
-    password: string,
-    role: string,
-  ) => {
+  signup: async (username: string, email: string, password: string) => {
     try {
-      await api.post("/auth/register", { username, email, password, role });
+      await api.post("/auth/register", { username, email, password });
     } catch (error: any) {
       console.error("Signup error:", error.message);
     }

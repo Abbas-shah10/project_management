@@ -5,7 +5,6 @@ const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12">
@@ -97,24 +96,6 @@ const Signup = () => {
                   required
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 />
-              </div>
-              <div>
-                <label
-                  htmlFor="role"
-                  className="mb-2 block text-sm font-medium text-slate-700"
-                >
-                  Your role
-                </label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(event) => setRole(event.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-                >
-                  <option value="user">Team member</option>
-                  <option value="manager">Project manager</option>
-                  <option value="admin">Administrator</option>
-                </select>
               </div>
               <button
                 type="submit"
