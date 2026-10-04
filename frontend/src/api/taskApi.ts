@@ -24,3 +24,42 @@ export const createTask = async (
   });
   return data.data;
 };
+
+export const deleteTask = async (taskId: string, projectId: string) => {
+  const { data } = await api.delete(`/tasks/${taskId}`, {
+    data: {
+      projectId,
+    },
+  });
+  return data.data;
+};
+
+interface UpdateTaskParams {
+  taskId: string;
+  projectId?: string;
+  title?: string;
+  description?: string;
+  assignedTo?: string;
+  status?: "todo" | "in_progress" | "done";
+  removeAttachments?: string[];
+}
+
+export const updateTask = async ({
+  taskId,
+  projectId,
+  title,
+  description,
+  assignedTo,
+  status,
+  removeAttachments,
+}: UpdateTaskParams) => {
+  const { data } = await api.put(`/tasks/${taskId}`, {
+    projectId,
+    title,
+    description,
+    assignedTo,
+    status,
+    removeAttachments,
+  });
+  return data.data;
+};
