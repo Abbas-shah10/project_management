@@ -149,6 +149,7 @@ const deleteTask = asyncHandler(async (req, res) => {
 });
 const getTaskById = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
+  console.log(taskId)
   const task = await Task.aggregate([
     {
       $match: {
@@ -163,10 +164,13 @@ const getTaskById = asyncHandler(async (req, res) => {
         as: "assignedTo",
         pipeline: [
           {
-            _id: 1,
-            username: 1,
-            fullName: 1,
-            avatar: 1,
+            // FIXED: Added the missing $project stage wrapper here
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              avatar: 1,
+            }
           }
         ]
       }
@@ -192,15 +196,18 @@ const getTaskById = asyncHandler(async (req, res) => {
                     fullName: 1,
                     avatar: 1,
                   },
-                },
-                {
-                  $addFields: {
-                    createdBy: {
-                      $arrayElemAt: ["$createdBy", 0]
-                    }
-                  }
                 }
+                // CLEANED UP: Moved the $addFields out of the $project pipeline
               ]
+            }
+          },
+          {
+            // FIXED: Placed this $addFields stage at the correct subtask level 
+            // to flatten the 'createdBy' array for each subtask
+            $addFields: {
+              createdBy: {
+                $arrayElemAt: ["$createdBy", 0]
+              }
             }
           }
         ]
@@ -214,6 +221,7 @@ const getTaskById = asyncHandler(async (req, res) => {
       }
     }
   ]);
+
 
   if (!task || task.length === 0) {
     throw new ApiError(404, "Task not found")
