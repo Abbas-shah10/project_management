@@ -53,8 +53,7 @@ export const updateTask = async ({
   status,
   removeAttachments,
 }: UpdateTaskParams) => {
-  const { data } = await api.put(`/tasks/${taskId}`, {
-    projectId,
+  const { data } = await api.put(`/projects/${projectId}/tasks/${taskId}`, {
     title,
     description,
     assignedTo,
