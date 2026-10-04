@@ -149,7 +149,6 @@ const deleteTask = asyncHandler(async (req, res) => {
 });
 const getTaskById = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
-  console.log(taskId)
   const task = await Task.aggregate([
     {
       $match: {
@@ -213,13 +212,6 @@ const getTaskById = asyncHandler(async (req, res) => {
         ]
       }
     },
-    {
-      $addFields: {
-        assignedTo: {
-          $arrayElemAt: ["$assignedTo", 0]
-        }
-      }
-    }
   ]);
 
 
