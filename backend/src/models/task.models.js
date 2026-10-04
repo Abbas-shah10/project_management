@@ -31,6 +31,16 @@ const taskSchema = new Schema({
     }
   ],
   default: [],
+  priority: {
+    type: String,
+    enum: ["low", "medium", "high", "urgent"],
+    default: "medium",
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 }, { timestamps: true });
 
 
