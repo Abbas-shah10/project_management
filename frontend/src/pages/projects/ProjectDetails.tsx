@@ -92,7 +92,7 @@ const ProjectDetails = () => {
                 <div>
                   <h2 className="text-lg font-bold">Tasks</h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    3 of 5 tasks completed
+                    {tasks.length} tasks in this project
                   </p>
                 </div>
                 <button
