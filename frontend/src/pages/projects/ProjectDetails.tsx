@@ -27,7 +27,6 @@ const ProjectDetails = () => {
       fetchAllTasks(id);
     }
   }, [fetchProjectById, id, fetchAllTasks]);
-  console.log("tasks", tasks);
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
