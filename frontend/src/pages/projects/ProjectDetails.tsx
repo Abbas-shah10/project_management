@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import useProjectStore from "../../stores/projectStore";
 import { canManageProject } from "../../utils/permissions";
+import { useTaskStore } from "../../stores/taskStore";
 
 const formatProjectTime = (value: unknown): string => {
   if (value === undefined || value === null || value === "") return "—";
@@ -18,12 +19,15 @@ const formatProjectTime = (value: unknown): string => {
 const ProjectDetails = () => {
   const { id } = useParams();
   const { fetchProjectById, project } = useProjectStore();
+  const { fetchAllTasks, tasks } = useTaskStore();
   const canManage = canManageProject(project?.currentUserRole);
   useEffect(() => {
     if (id) {
       fetchProjectById(id);
+      fetchAllTasks(id);
     }
-  }, [fetchProjectById, id]);
+  }, [fetchProjectById, id, fetchAllTasks]);
+  console.log("tasks", tasks);
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
@@ -94,41 +98,29 @@ const ProjectDetails = () => {
               </button>
             </div>
             <ul className="mt-5 divide-y divide-slate-100">
-              {[
-                {
-                  title: "Project kickoff and discovery",
-                  done: true,
-                  owner: "Alex Morgan",
-                },
-                { title: "Create wireframes", done: true, owner: "Jamie Lee" },
-                {
-                  title: "Review visual direction",
-                  done: true,
-                  owner: "Taylor Kim",
-                },
-                {
-                  title: "Build responsive interface",
-                  done: false,
-                  owner: "Jamie Lee",
-                },
-                { title: "QA and launch", done: false, owner: "Alex Morgan" },
-              ].map((task) => (
-                <li key={task.title} className="flex items-center gap-3 py-4">
-                  <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-full border text-xs ${task.done ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-300"}`}
+              {tasks.map((task) => {
+                return (
+                  <li
+                    key={task._id || task.title}
+                    className="flex items-center justify-between gap-3 py-4"
                   >
-                    {task.done ? "✓" : ""}
-                  </span>
-                  <span
-                    className={`flex-1 text-sm font-medium ${task.done ? "text-slate-400 line-through" : "text-slate-700"}`}
-                  >
-                    {task.title}
-                  </span>
-                  <span className="hidden text-xs text-slate-500 sm:block">
-                    {task.owner}
-                  </span>
-                </li>
-              ))}
+                    <span
+                      className={` text-sm font-bold text-slate-600 ${
+                        task.priority === "high"
+                          ? " text-red-700"
+                          : task.priority === "medium"
+                            ? "bg-yellow-100 text-yellow-400"
+                            : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {task.title}
+                    </span>
+                    <span className="">
+                      {task.assignedTo?.username || "Unassigned"}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </section>
           <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -1,7 +1,7 @@
 import api from "./axios";
 
-export const fetchAllTasks = async () => {
-  const { data } = await api.get("/tasks");
+export const fetchAllTasks = async (projectId: string) => {
+  const { data } = await api.get(`/tasks/projects/${projectId}`);
   return data.data;
 };
 

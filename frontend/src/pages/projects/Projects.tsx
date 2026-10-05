@@ -250,8 +250,6 @@ const Projects = () => {
     fetchProjects();
   }, [fetchProjects]);
 
-  console.log("Projects: ", projects);
-
   const filteredProjects = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return projects.filter((project) => {

@@ -7,7 +7,10 @@ interface Task {
   title: string;
   description: string;
   project: Project;
-  assignedTo: string;
+  assignedTo: {
+    _id: string;
+    username: string;
+  };
   status: "todo" | "in-progress" | "done";
   attachment?: string;
   priority: "low" | "medium" | "high";
@@ -15,25 +18,25 @@ interface Task {
 }
 
 interface TaskState {
-  tasks: null | Task[];
+  tasks: Task[];
   task: null;
   loading: boolean;
   error: string | null;
-  fetchAllTasks: () => Promise<void>;
+  fetchAllTasks: (projectId: string) => Promise<void>;
 }
 
 const useTaskStore = create<TaskState>((set) => ({
-  tasks: null,
+  tasks: [],
   task: null,
   loading: false,
   error: null,
-  fetchAllTasks: async () => {
+  fetchAllTasks: async (projectId: string) => {
     set({ loading: true, error: null });
 
     try {
-      const res = await taskApi.fetchAllTasks();
+      const res = await taskApi.fetchAllTasks(projectId);
 
-      set({ tasks: res.data || [], loading: false, error: null });
+      set({ tasks: res.tasks || [], loading: false, error: null });
     } catch (error: any) {
       set({ loading: false, error: error.message || "Failed to fetch tasks" });
     }

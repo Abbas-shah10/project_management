@@ -19,7 +19,7 @@ const getTasks = asyncHandler(async (req, res) => {
   const tasks = await Task.find({ project: new mongoose.Types.ObjectId(projectId) }).populate('assignedTo', 'avatar username fullName');
 
   return res.status(200).json(
-    new ApiResponse(200, 'Tasks fetched successfully', tasks)
+    new ApiResponse(200, { tasks }, 'Tasks fetched successfully',)
   )
 });
 const createTask = asyncHandler(async (req, res) => {
