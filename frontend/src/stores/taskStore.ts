@@ -23,6 +23,13 @@ interface TaskState {
   loading: boolean;
   error: string | null;
   fetchAllTasks: (projectId: string) => Promise<void>;
+  createTask: (
+    title: string,
+    description: string,
+    status: "todo" | "in_progress" | "done",
+    assignedTo: string,
+    projectId: string,
+  ) => Promise<void>;
 }
 
 const useTaskStore = create<TaskState>((set) => ({
@@ -39,6 +46,27 @@ const useTaskStore = create<TaskState>((set) => ({
       set({ tasks: res.tasks || [], loading: false, error: null });
     } catch (error: any) {
       set({ loading: false, error: error.message || "Failed to fetch tasks" });
+    }
+  },
+  createTask: async (
+    title: string,
+    description: string,
+    status: "todo" | "in_progress" | "done",
+    assignedTo: string,
+    projectId: string,
+  ) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await taskApi.createTask(
+        title,
+        description,
+        status,
+        assignedTo,
+        projectId,
+      );
+      set({ tasks: [...res.tasks], loading: false, error: null });
+    } catch (error: any) {
+      set({ loading: false, error: error.message || "Failed to create task" });
     }
   },
 }));

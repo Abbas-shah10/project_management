@@ -13,8 +13,8 @@ export const fetchTaskById = async (taskId: string, projectId: string) => {
 export const createTask = async (
   title: string,
   description: string,
-  assignedTo: string,
   status: "todo" | "in_progress" | "done",
+  assignedTo: string,
   projectId: string,
 ) => {
   const { data } = await api.post(`/projects/${projectId}`, {
