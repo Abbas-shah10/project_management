@@ -31,6 +31,7 @@ interface TaskState {
     projectId: string,
   ) => Promise<void>;
   deleteTask: (taskId: string, projectId: string) => Promise<void>;
+  getTaskById: (taskId: string, projectId: string) => Promise<void>;
 }
 
 const useTaskStore = create<TaskState>((set) => ({
@@ -81,6 +82,15 @@ const useTaskStore = create<TaskState>((set) => ({
       }));
     } catch (error: any) {
       set({ loading: false, error: error.message || "Failed to delete task" });
+    }
+  },
+  getTaskById: async (taskId: string, projectId: string) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await taskApi.fetchTaskById(taskId, projectId);
+      set({ task: res.task, loading: false, error: null });
+    } catch (error: any) {
+      set({ loading: false, error: error.message || "Failed to fetch task" });
     }
   },
 }));
