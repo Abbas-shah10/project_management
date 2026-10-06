@@ -5,8 +5,8 @@ export const fetchAllTasks = async (projectId: string) => {
   return data.data;
 };
 
-export const fetchTaskById = async (taskId: string) => {
-  const { data } = await api.get(`/tasks/${taskId}`);
+export const fetchTaskById = async (taskId: string, projectId: string) => {
+  const { data } = await api.get(`/projects/${projectId}/${taskId}`);
   return data.data;
 };
 
@@ -15,8 +15,9 @@ export const createTask = async (
   description: string,
   assignedTo: string,
   status: "todo" | "in_progress" | "done",
+  projectId: string,
 ) => {
-  const { data } = await api.post("/tasks", {
+  const { data } = await api.post(`/projects/${projectId}`, {
     title,
     description,
     assignedTo,
@@ -26,7 +27,7 @@ export const createTask = async (
 };
 
 export const deleteTask = async (taskId: string, projectId: string) => {
-  const { data } = await api.delete(`/tasks/${taskId}`, {
+  const { data } = await api.delete(`/projects/${projectId}/${taskId}`, {
     data: {
       projectId,
     },
@@ -53,7 +54,7 @@ export const updateTask = async ({
   status,
   removeAttachments,
 }: UpdateTaskParams) => {
-  const { data } = await api.put(`/projects/${projectId}/tasks/${taskId}`, {
+  const { data } = await api.put(`/projects/${projectId}/${taskId}`, {
     title,
     description,
     assignedTo,
