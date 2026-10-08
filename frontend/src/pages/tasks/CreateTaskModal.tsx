@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTaskStore } from "../../stores/taskStore";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -16,7 +17,9 @@ const CreateTaskModal = ({
   const { id } = useParams<string>();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("todo");
+  const [status, setStatus] = useState<"todo" | "in_progress" | "done">(
+    "todo",
+  );
   const { fetchAllTasks, createTask } = useTaskStore();
 
   useEffect(() => {
@@ -26,10 +29,16 @@ const CreateTaskModal = ({
   }, [fetchAllTasks, id]);
   if (!isOpen) return null;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onCreated();
     onClose();
+
+    try {
+      await createTask(title, description, status, "userId", id || "");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create task");
+    }
   };
 
   return (
