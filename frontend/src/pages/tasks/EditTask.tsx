@@ -1,5 +1,5 @@
 const EditTask = () => {
-  return <div>edit</div>;
+  return <div></div>;
 };
 
 export default EditTask;
