@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTaskStore } from "../../stores/taskStore";
+import { useParams } from "react-router-dom";
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -11,9 +13,17 @@ const CreateTaskModal = ({
   onClose,
   onCreated,
 }: CreateTaskModalProps) => {
+  const { id } = useParams<string>();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("todo");
+  const { fetchAllTasks, createTask } = useTaskStore();
+
+  useEffect(() => {
+    if (id) {
+      fetchAllTasks(id);
+    }
+  }, [fetchAllTasks, id]);
   if (!isOpen) return null;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
