@@ -32,6 +32,7 @@ interface TaskState {
   ) => Promise<void>;
   deleteTask: (taskId: string, projectId: string) => Promise<void>;
   getTaskById: (taskId: string, projectId: string) => Promise<void>;
+  updateTask: () => Promise<void>;
 }
 
 const useTaskStore = create<TaskState>((set) => ({
@@ -92,6 +93,9 @@ const useTaskStore = create<TaskState>((set) => ({
     } catch (error: any) {
       set({ loading: false, error: error.message || "Failed to fetch task" });
     }
+  },
+  updateTask: async () => {
+    set({ loading: true, error: null });
   },
 }));
 
