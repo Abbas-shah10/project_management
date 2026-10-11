@@ -37,11 +37,11 @@ export const deleteTask = async (taskId: string, projectId: string) => {
 
 interface UpdateTaskParams {
   taskId: string;
-  projectId?: string;
-  title?: string;
-  description?: string;
-  assignedTo?: string;
-  status?: "todo" | "in_progress" | "done";
+  projectId: string;
+  title: string;
+  description: string;
+  assignedTo: string;
+  status: "todo" | "in_progress" | "done";
   removeAttachments?: string[];
 }
 
