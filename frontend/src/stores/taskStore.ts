@@ -32,7 +32,14 @@ interface TaskState {
   ) => Promise<void>;
   deleteTask: (taskId: string, projectId: string) => Promise<void>;
   getTaskById: (taskId: string, projectId: string) => Promise<void>;
-  updateTask: () => Promise<void>;
+  updateTask: (
+    taskId: string,
+    projectId: string,
+    title: string,
+    description: string,
+    assignedTo: string,
+    status: "todo" | "in_progress" | "done",
+  ) => Promise<void>;
 }
 
 const useTaskStore = create<TaskState>((set) => ({
@@ -94,8 +101,29 @@ const useTaskStore = create<TaskState>((set) => ({
       set({ loading: false, error: error.message || "Failed to fetch task" });
     }
   },
-  updateTask: async () => {
+  updateTask: async (
+    taskId: string,
+    projectId: string,
+    title: string,
+    description: string,
+    assignedTo: string,
+    status: "todo" | "in_progress" | "done",
+  ) => {
     set({ loading: true, error: null });
+    try {
+      const res = await taskApi.updateTask({
+        taskId,
+        projectId,
+        title,
+        description,
+        assignedTo,
+        status,
+      });
+
+      set({ tasks: [...res.tasks], loading: false, error: null });
+    } catch (error: any) {
+      set({ loading: false, error: error.message || "Failed to update task" });
+    }
   },
 }));
 
