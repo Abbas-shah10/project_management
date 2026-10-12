@@ -1,17 +1,7 @@
 import { useState, type FormEvent } from "react";
 
-type TaskForm = {
-  title: string;
-  description: string;
-  status: string;
-  priority: string;
-  assignee: string;
-  project: string;
-  dueDate: string;
-};
-
 const EditTask = () => {
-  const [task, setTask] = useState<TaskForm>({
+  const [task, setTask] = useState({
     title: "",
     description: "",
     status: "In progress",
@@ -94,7 +84,9 @@ const EditTask = () => {
                 id="task-description"
                 rows={4}
                 value={task.description}
-                onChange={(event) => updateField("description", event.target.value)}
+                onChange={(event) =>
+                  updateField("description", event.target.value)
+                }
                 placeholder="Add details about this task..."
                 className={`${inputClassName} resize-y`}
               />
@@ -108,7 +100,9 @@ const EditTask = () => {
                 <select
                   id="task-status"
                   value={task.status}
-                  onChange={(event) => updateField("status", event.target.value)}
+                  onChange={(event) =>
+                    updateField("status", event.target.value)
+                  }
                   className={inputClassName}
                 >
                   <option>To do</option>
@@ -124,7 +118,9 @@ const EditTask = () => {
                 <select
                   id="task-priority"
                   value={task.priority}
-                  onChange={(event) => updateField("priority", event.target.value)}
+                  onChange={(event) =>
+                    updateField("priority", event.target.value)
+                  }
                   className={inputClassName}
                 >
                   <option>Low</option>
@@ -140,7 +136,9 @@ const EditTask = () => {
                 <input
                   id="task-assignee"
                   value={task.assignee}
-                  onChange={(event) => updateField("assignee", event.target.value)}
+                  onChange={(event) =>
+                    updateField("assignee", event.target.value)
+                  }
                   placeholder="Name or email"
                   className={inputClassName}
                 />
@@ -152,7 +150,9 @@ const EditTask = () => {
                 <input
                   id="task-project"
                   value={task.project}
-                  onChange={(event) => updateField("project", event.target.value)}
+                  onChange={(event) =>
+                    updateField("project", event.target.value)
+                  }
                   placeholder="Project name"
                   className={inputClassName}
                 />
@@ -165,7 +165,9 @@ const EditTask = () => {
                   id="task-due-date"
                   type="date"
                   value={task.dueDate}
-                  onChange={(event) => updateField("dueDate", event.target.value)}
+                  onChange={(event) =>
+                    updateField("dueDate", event.target.value)
+                  }
                   className={inputClassName}
                 />
               </div>
