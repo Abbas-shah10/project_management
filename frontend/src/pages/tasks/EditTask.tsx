@@ -12,9 +12,11 @@ const EditTask = () => {
   });
   const [saved, setSaved] = useState(false);
 
-  const updateField = (field: keyof TaskForm, value: string) => {
-    setTask((current) => ({ ...current, [field]: value }));
-    setSaved(false);
+  const updateField = (field: string, value: string) => {
+    setTask((prevTask) => ({
+      ...prevTask,
+      [field]: value,
+    }));
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
