@@ -31,7 +31,7 @@ const CreateProjectModal = ({
 
   return (
     <>
-      <style>{`@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}.primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px #6366f14d}.close:hover{background:#eef2ff;color:#4f46e5}.field:focus{outline:none;border-color:#818cf8;box-shadow:0 0 0 4px #818cf826}`}</style>
+      <style>{`@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}.primary:hover{transform:translateY(-2px);box-shadow:0 12px 24px #6366f14d}.close:hover{background:#020617;color:#4f46e5}.field:focus{outline:none;border-color:#818cf8;box-shadow:0 0 0 4px #818cf826}`}</style>
       <div
         style={styles.overlay}
         role="dialog"
@@ -162,7 +162,7 @@ const styles: Record<string, CSSProperties> = {
     display: "grid",
     placeItems: "center",
     padding: 20,
-    background: "#0f172a85",
+    background: "#020617",
     backdropFilter: "blur(8px)",
     animation: "fade .25s ease",
   },
@@ -172,7 +172,7 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 470,
     padding: "34px 36px 30px",
     borderRadius: 24,
-    background: "white",
+    background: "#020612",
     boxShadow: "0 25px 70px #0f172a40",
     animation: "pop .35s cubic-bezier(.2,.8,.2,1)",
   },
