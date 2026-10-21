@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { Project } from "../pages/projects/Projects";
 import * as taskApi from "../api/taskApi";
 
-interface Task {
+export interface Task {
   _id: string;
   title: string;
   description: string;

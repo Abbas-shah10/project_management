@@ -4,6 +4,7 @@ import useProjectStore from "../../stores/projectStore";
 import { canManageProject } from "../../utils/permissions";
 import { useTaskStore } from "../../stores/taskStore";
 import CreateTaskModal from "../tasks/CreateTaskModal";
+import TaskCard from "../../components/layout/TaskCard";
 
 const formatProjectTime = (value: unknown): string => {
   if (value === undefined || value === null || value === "") return "—";
@@ -103,29 +104,9 @@ const ProjectDetails = () => {
                 </button>
               </div>
               <ul className="mt-5 divide-y divide-slate-100">
-                {tasks.map((task) => {
-                  return (
-                    <li
-                      key={task._id || task.title}
-                      className="flex items-center justify-between gap-3 py-4"
-                    >
-                      <span
-                        className={` text-sm font-bold text-slate-600 ${
-                          task.priority === "high"
-                            ? " text-red-700"
-                            : task.priority === "medium"
-                              ? "bg-yellow-100 text-yellow-400"
-                              : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {task.title}
-                      </span>
-                      <span className="">
-                        {task.assignedTo?.username || "Unassigned"}
-                      </span>
-                    </li>
-                  );
-                })}
+                {tasks.map((task) => (
+                  <TaskCard key={task._id} task={task} />
+                ))}
               </ul>
             </section>
             <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
