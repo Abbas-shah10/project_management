@@ -235,7 +235,7 @@ const createSubTask = asyncHandler(async (req, res) => {
   const task = await Task.findById(taskId);
 
   if (!task) {
-    return ApiError(404, "Task not found")
+    return new ApiError(404, "Task not found")
   }
 
   const subTask = await SubTask.create({

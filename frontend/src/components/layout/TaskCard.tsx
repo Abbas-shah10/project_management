@@ -18,8 +18,6 @@ const TaskCard = ({ task }: TaskCardProps) => {
     return "";
   };
 
-  console.log("Task", task);
-
   const title = label("title", "name") || "Untitled task";
   const description = label("description", "details");
   const status = label("status") || "To do";
