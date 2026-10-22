@@ -270,7 +270,17 @@ const updateSubTask = asyncHandler(async (req, res) => {
     new ApiResponse(200, "Task status updated successfully", subTask)
   )
 });
-const deleteSubTask = asyncHandler(async (req, res) => { });
+const deleteSubTask = asyncHandler(async (req, res) => {
+  const { subTaskId } = req.params;
+
+  const subTask = await SubTask.findByIdAndDelete(subTaskId)
+
+  if (!subTask) {
+    return new ApiError(404, "Subtask not found")
+  } else {
+    return new ApiResponse(200, {}, "SubTask delete successfully")
+  }
+});
 
 export {
   getTasks,
