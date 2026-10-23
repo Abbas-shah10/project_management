@@ -229,7 +229,7 @@ const createSubTask = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
 
   if (title || createdBy) {
-    return ApiError(400, "All the given fields are required")
+    return new ApiError(400, "All the given fields are required")
   }
 
   const task = await Task.findById(taskId);
