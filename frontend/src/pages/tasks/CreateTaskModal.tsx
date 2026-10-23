@@ -17,9 +17,7 @@ const CreateTaskModal = ({
   const { id } = useParams<string>();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState<"todo" | "in_progress" | "done">(
-    "todo",
-  );
+  const [status, setStatus] = useState<"todo" | "in_progress" | "done">("todo");
   const { fetchAllTasks, createTask } = useTaskStore();
 
   useEffect(() => {
@@ -43,7 +41,7 @@ const CreateTaskModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#020612] text-white p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -52,13 +50,13 @@ const CreateTaskModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="create-task-title"
-        className="w-full max-w-2xl rounded-2xl bg-white shadow-xl"
+        className="w-full max-w-2xl rounded-2xl bg-slate-700/20 shadow-xl"
       >
         <header className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
           <div>
             <h1
               id="create-task-title"
-              className="text-xl font-semibold text-slate-900"
+              className="text-xl font-semibold  text-white"
             >
               Create a task
             </h1>
@@ -124,7 +122,7 @@ const CreateTaskModal = ({
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 defaultValue="medium"
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-slate-300 bg-slate-700 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>

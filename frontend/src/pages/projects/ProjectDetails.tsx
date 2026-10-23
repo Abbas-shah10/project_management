@@ -40,7 +40,7 @@ const ProjectDetails = () => {
           >
             ← All projects
           </a>
-          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <section className="mt-6 rounded-2xl border border-slate-900 bg-slate-950/50 text-white p-6 shadow-sm sm:p-8">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
               <div>
                 <p className="text-sm font-medium text-indigo-600">
@@ -88,7 +88,7 @@ const ProjectDetails = () => {
             </div>
           </section>
           <div className="mt-6 grid gap-6 lg:grid-cols-3">
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+            <section className="rounded-2xl border border-slate-900 bg-slate-950/50 text-white p-6 shadow-sm lg:col-span-2">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold">Tasks</h2>
@@ -109,7 +109,7 @@ const ProjectDetails = () => {
                 ))}
               </ul>
             </section>
-            <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <aside className="rounded-2xl border border-slate-900/50 bg-slate-950/50 text-white p-6 shadow-sm">
               <h2 className="text-lg font-bold">Team</h2>
               <p className="mt-1 text-sm text-slate-500">
                 People working on this project
@@ -118,7 +118,7 @@ const ProjectDetails = () => {
                 {project?.members.map((member) => (
                   <li key={member._id} className="flex items-center gap-3">
                     <span
-                      className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-600 ${member.color || ""}`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-sm font-bold text-slate-600 ${member.color || ""}`}
                     >
                       {member.user?.username?.charAt(0).toUpperCase()}
                     </span>
