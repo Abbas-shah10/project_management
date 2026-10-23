@@ -120,13 +120,15 @@ const CreateTaskModal = ({
               <select
                 name="priority"
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                defaultValue="medium"
+                onChange={(e) =>
+                  setStatus(e.target.value as "todo" | "in_progress" | "done")
+                }
+                defaultValue="todo"
                 className="w-full rounded-lg border border-slate-300 bg-slate-700 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="todo">Todo</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
               </select>
             </label>
             <label className="sm:col-span-2">
