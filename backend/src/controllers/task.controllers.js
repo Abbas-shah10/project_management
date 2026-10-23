@@ -226,16 +226,26 @@ const getTaskById = asyncHandler(async (req, res) => {
 });
 const createSubTask = asyncHandler(async (req, res) => {
   const { title, createdBy, isCompleted } = req.body;
-  const { taskId } = req.params;
+  const { taskId, projectId } = req.params;
 
   if (title || createdBy) {
     return new ApiError(400, "All the given fields are required")
   }
+  const project = await Project.findById(projectId);
+
+  if (!project) {
+    throw new ApiError(404, "Project not found")
+  }
+
 
   const task = await Task.findById(taskId);
 
   if (!task) {
-    return new ApiError(404, "Task not found")
+    throw new ApiError(404, "Task not found")
+  }
+
+  if (task.project.toString() !== project._id.toString()) {
+    throw new ApiError(400, "Task does not belong to the given project")
   }
 
   const subTask = await SubTask.create({
