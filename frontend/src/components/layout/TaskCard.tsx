@@ -59,15 +59,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
               {title}
             </h3>
           </div>
-          {priority && (
-            <>
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${priorityColor}`}
-              >
-                {priority}
-              </span>
-            </>
-          )}
+          {/* menu option */}
         </div>
 
         {description && (
@@ -78,16 +70,12 @@ const TaskCard = ({ task }: TaskCardProps) => {
 
         {(formattedDate || assignee) && (
           <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-            {formattedDate ? (
-              <span className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                <span aria-hidden="true" className="text-indigo-500">
-                  ◷
-                </span>
-                Due {formattedDate}
-              </span>
-            ) : (
-              <span />
-            )}
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${priorityColor}`}
+            >
+              {priority}
+            </span>
+
             {assignee && (
               <span className="flex min-w-0 items-center gap-2 text-xs font-medium text-slate-700">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 font-bold uppercase text-indigo-700">

@@ -95,77 +95,77 @@ function ProjectCard({
 
   return (
     <>
-      <Link to={`/projects/${project._id}`}>
-        <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
-          <div className="flex items-start justify-between gap-4">
-            <div
-              className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors?.icon}`}
-            >
-              <FolderKanban size={20} />
-            </div>
-            {canManage && (
-              <div className="relative">
+      <article className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/10 transition hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900">
+        <div className="flex items-start justify-between gap-4">
+          <div
+            className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors?.icon}`}
+          >
+            <FolderKanban size={20} />
+          </div>
+          {canManage && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setOpenOptions((isOpen) => !isOpen)}
+                className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
+                aria-label={`More options for ${project.name}`}
+                aria-expanded={openOptions}
+                aria-haspopup="menu"
+              >
+                <MoreHorizontal size={19} />
+              </button>
+
+              <div
+                className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
+                  openOptions
+                    ? "translate-y-0 scale-100 opacity-100"
+                    : "pointer-events-none -translate-y-2 scale-95 opacity-0"
+                }`}
+                role="menu"
+                aria-hidden={!openOptions}
+              >
+                <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Project actions
+                </p>
                 <button
                   type="button"
-                  onClick={() => setOpenOptions((isOpen) => !isOpen)}
-                  className={`rounded-xl p-2 text-slate-600 transition hover:bg-slate-800 hover:text-white ${openOptions ? "bg-slate-800 text-white" : ""}`}
-                  aria-label={`More options for ${project.name}`}
-                  aria-expanded={openOptions}
-                  aria-haspopup="menu"
+                  onClick={() => setOpenEdit(true)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                  role="menuitem"
                 >
-                  <MoreHorizontal size={19} />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
+                    <Pencil size={14} />
+                  </span>
+                  <span>Edit project</span>
                 </button>
-
-                <div
-                  className={`absolute right-0 top-full z-20 mt-2 w-52 origin-top-right rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-slate-950/50 backdrop-blur-xl transition-all duration-200 ease-out ${
-                    openOptions
-                      ? "translate-y-0 scale-100 opacity-100"
-                      : "pointer-events-none -translate-y-2 scale-95 opacity-0"
-                  }`}
-                  role="menu"
-                  aria-hidden={!openOptions}
+                <button
+                  type="button"
+                  onClick={() => setAddMembersOpen(true)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-green-300 transition hover:bg-green-400/10 hover:text-green-200"
+                  role="menuitem"
                 >
-                  <p className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Project actions
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setOpenEdit(true)}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
-                    role="menuitem"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-400/10 text-sky-300">
-                      <Pencil size={14} />
-                    </span>
-                    <span>Edit project</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAddMembersOpen(true)}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-green-300 transition hover:bg-green-400/10 hover:text-green-200"
-                    role="menuitem"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
-                      <Plus size={14} />
-                    </span>
-                    <span>Add Members</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => deleteProjectById(project._id)}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
-                    role="menuitem"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
-                      <Trash2 size={14} />
-                    </span>
-                    <span>Delete project</span>
-                  </button>
-                </div>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                    <Plus size={14} />
+                  </span>
+                  <span>Add Members</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteProjectById(project._id)}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-400/10 hover:text-rose-200"
+                  role="menuitem"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                    <Trash2 size={14} />
+                  </span>
+                  <span>Delete project</span>
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
+        <Link to={`/projects/${project._id}`}>
           <div className="mt-5 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="wrap-break-word text-base font-semibold text-white">
@@ -181,40 +181,41 @@ function ProjectCard({
               {project.description}
             </p>
           </div>
+        </Link>
+        <div className="mt-6 flex items-center justify-between text-xs">
+          <span className="text-slate-500">Progress</span>
+          <span className="font-semibold text-slate-200">
+            {project.progress}%
+          </span>
+        </div>
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
+          <span
+            className={`block h-full rounded-full ${colors?.bar}`}
+            style={{ width: `${project.progress}%` }}
+          />
+        </div>
 
-          <div className="mt-6 flex items-center justify-between text-xs">
-            <span className="text-slate-500">Progress</span>
-            <span className="font-semibold text-slate-200">
-              {project.progress}%
-            </span>
-          </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-800">
-            <span
-              className={`block h-full rounded-full ${colors?.bar}`}
-              style={{ width: `${project.progress}%` }}
-            />
+        <div className="mt-5 flex min-w-0 items-center justify-between gap-3 border-t border-slate-800 pt-4">
+          <div className="flex min-w-0 max-w-[70%] -space-x-2 overflow-hidden">
+            {project.members?.map((member, index) => (
+              <span
+                key={member}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
+              >
+                {member}
+              </span>
+            ))}
           </div>
 
-          <div className="mt-5 flex min-w-0 items-center justify-between gap-3 border-t border-slate-800 pt-4">
-            <div className="flex min-w-0 max-w-[70%] -space-x-2 overflow-hidden">
-              {project.members?.map((member, index) => (
-                <span
-                  key={member}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-900 text-[10px] font-bold ${index % 2 === 0 ? "bg-slate-700 text-slate-200" : "bg-slate-800 text-slate-400"}`}
-                >
-                  {member}
-                </span>
-              ))}
-            </div>
-            <span className="shrink-0 text-right text-xs text-slate-500">
-              {project.tasks}
-            </span>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-            <CalendarDays size={14} /> Due {project.dueLabel}
-          </div>
-        </article>
-      </Link>
+          <span className="shrink-0 text-right text-xs text-slate-500">
+            {project.tasks}
+          </span>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <CalendarDays size={14} /> Due {project.dueLabel}
+        </div>
+      </article>
+
       {openEdit && (
         <EditProject
           project={project}
