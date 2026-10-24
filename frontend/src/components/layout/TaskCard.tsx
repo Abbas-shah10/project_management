@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import type { Task } from "../../stores/taskStore";
+import useProjectStore from "../../stores/projectStore";
 
 interface TaskCardProps {
   task: Task;
 }
 const TaskCard = ({ task }: TaskCardProps) => {
   const details = task as unknown as Record<string, unknown>;
+  const { project } = useProjectStore();
   const label = (...keys: string[]) => {
     for (const key of keys) {
       const value = details[key];
@@ -45,7 +47,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
       : "bg-amber-50 text-amber-700 ring-amber-200";
 
   return (
-    <Link to={`/tasks/${task._id}`}>
+    <Link to={`/projects/${project?._id}/tasks/${task._id}`}>
       <article className="group cursor-pointer relative overflow-hidden rounded-2xl border border-slate-900 bg-slate-950/50 p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5  hover:shadow-lg">
         <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-indigo-500 via-violet-500 to-fuchsia-400" />
         <div className="flex items-start justify-between gap-3">

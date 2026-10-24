@@ -21,7 +21,10 @@ const AppRoutes = () => {
           <Route index element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
-          <Route path="/tasks/:id" element={<TaskDetails />} />
+          <Route
+            path="/projects/:projectId/tasks/:taskId"
+            element={<TaskDetails />}
+          />
         </Route>
       </Route>
     </Routes>

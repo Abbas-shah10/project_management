@@ -95,8 +95,8 @@ const useTaskStore = create<TaskState>((set) => ({
   getTaskById: async (taskId: string, projectId: string) => {
     set({ loading: true, error: null });
     try {
-      const res = await taskApi.fetchTaskById(taskId, projectId);
-      set({ task: res.task, loading: false, error: null });
+      const data = await taskApi.fetchTaskById(taskId, projectId);
+      set({ task: data, loading: false, error: null });
     } catch (error: any) {
       set({ loading: false, error: error.message || "Failed to fetch task" });
     }

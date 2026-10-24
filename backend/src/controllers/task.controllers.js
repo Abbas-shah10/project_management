@@ -212,7 +212,8 @@ const getTaskById = asyncHandler(async (req, res) => {
         ]
       }
     },
-  ]);
+  ]).then(([task]) => task);
+
 
 
   if (!task || task.length === 0) {

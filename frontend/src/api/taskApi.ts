@@ -6,7 +6,7 @@ export const fetchAllTasks = async (projectId: string) => {
 };
 
 export const fetchTaskById = async (taskId: string, projectId: string) => {
-  const { data } = await api.get(`/projects/${projectId}/${taskId}`);
+  const { data } = await api.get(`/tasks/projects/${projectId}/${taskId}`);
   return data.data;
 };
 
