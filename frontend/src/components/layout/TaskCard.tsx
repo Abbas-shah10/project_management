@@ -44,7 +44,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
       : "bg-amber-50 text-amber-700 ring-amber-200";
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-slate-900 bg-slate-950/50 p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5  hover:shadow-lg">
+    <article className="group cursor-pointer relative overflow-hidden rounded-2xl border border-slate-900 bg-slate-950/50 p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5  hover:shadow-lg">
       <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-indigo-500 via-violet-500 to-fuchsia-400" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
