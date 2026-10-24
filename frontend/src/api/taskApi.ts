@@ -63,3 +63,22 @@ export const updateTask = async ({
   });
   return data.data;
 };
+
+export const createSubTask = async (projectId: string, taskId: string) => {
+  const { data } = await api.post(`/projects/${projectId}/${taskId}/subtasks`);
+  return data.data;
+};
+
+export const updateSubTask = async (projectId: string, subTaskId: string) => {
+  const { data } = await api.put(
+    `/projects/${projectId}/subtasks/${subTaskId}`,
+  );
+  return data.data;
+};
+
+export const deleteSubTask = async (projectId: string, subTaskId: string) => {
+  const { data } = await api.delete(
+    `/projects/${projectId}/subtasks/${subTaskId}`,
+  );
+  return data.data;
+};
