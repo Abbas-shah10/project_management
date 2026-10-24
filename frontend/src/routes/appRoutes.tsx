@@ -6,6 +6,7 @@ import Login from "../pages/auth/Login";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Signup from "../pages/auth/Signup";
 import ProjectDetails from "../pages/projects/ProjectDetails";
+import TaskDetails from "../pages/tasks/TaskDetails";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
           <Route index element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
+          <Route path="/tasks/:id" element={<TaskDetails />} />
         </Route>
       </Route>
     </Routes>
