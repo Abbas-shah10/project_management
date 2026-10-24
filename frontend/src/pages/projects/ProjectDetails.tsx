@@ -34,12 +34,6 @@ const ProjectDetails = () => {
     <>
       <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <a
-            href="/projects"
-            className="text-sm font-medium text-slate-500 hover:text-slate-900"
-          >
-            ← All projects
-          </a>
           <section className="mt-6 rounded-2xl border border-slate-900 bg-slate-950/50 text-white p-6 shadow-sm sm:p-8">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
               <div>
