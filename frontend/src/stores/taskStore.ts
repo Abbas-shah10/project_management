@@ -17,6 +17,13 @@ export interface Task {
   createdBy: string;
 }
 
+export interface SubTask {
+  _id: string;
+  title: string;
+  isCompleted: boolean;
+  createdBy: string;
+}
+
 interface TaskState {
   tasks: Task[];
   task: null;
