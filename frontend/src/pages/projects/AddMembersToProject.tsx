@@ -5,16 +5,20 @@ import { toast } from "react-toastify";
 
 interface AddMembersProps {
   onClose: () => void;
-  project: Project;
+  onAdded?: () => Promise<void> | void;
+  project: Pick<Project, "_id" | "name">;
 }
-const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
+const AddMembersToProject = ({
+  onClose,
+  onAdded,
+  project,
+}: AddMembersProps) => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"member" | "admin" | "project_admin">(
     "member",
   );
   const [loading, setLoading] = useState(false);
   const { AddMembersToProject } = useProjectStore();
-  console.log(project);
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -22,9 +26,16 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
     try {
       await AddMembersToProject(project._id, email, role);
       toast.success("User added to project successfully");
-    } catch (error: any) {
-      console.log("Error adding members");
-      toast.error("Error adding user to project", error);
+      await onAdded?.();
+      onClose();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to add user to project.",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,9 +111,10 @@ const AddMembersToProject = ({ onClose, project }: AddMembersProps) => {
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
             >
-              {loading ? "Adding Member" : "Add Member"}
+              {loading ? "Adding member…" : "Add member"}
             </button>
           </div>
         </form>

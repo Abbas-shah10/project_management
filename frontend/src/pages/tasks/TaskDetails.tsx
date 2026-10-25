@@ -1,15 +1,23 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTaskStore } from "../../stores/taskStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import {
+  createSubTask,
+  deleteSubTask,
+  updateSubTask,
+} from "../../api/taskApi";
+import { Trash2 } from "lucide-react";
 
 type TaskRecord = {
   title?: string;
-  status?: string;
+  status?: "todo" | "in_progress" | "done" | string;
   description?: string;
   subTasks?: Array<{
     _id?: string;
     id?: string;
     title: string;
+    isCompleted?: boolean;
     completed?: boolean;
   }>;
   priority?: string;
@@ -26,13 +34,79 @@ const TaskDetails = () => {
 
   useEffect(() => {
     if (taskId && projectId) {
-      getTaskById(taskId, projectId);
+      void getTaskById(taskId, projectId).catch((error: unknown) => {
+        toast.error(
+          error instanceof Error ? error.message : "Unable to load this task.",
+        );
+      });
     }
   }, [getTaskById, taskId, projectId]);
 
   const taskData: TaskRecord = task ?? {};
 
   const subtasks = Array.isArray(taskData.subTasks) ? taskData.subTasks : [];
+  const [subTaskTitle, setSubTaskTitle] = useState("");
+  const [subTaskLoading, setSubTaskLoading] = useState(false);
+
+  const reloadTask = async () => {
+    if (projectId && taskId) await getTaskById(taskId, projectId);
+  };
+
+  const handleAddSubTask = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!projectId || !taskId || !subTaskTitle.trim()) return;
+    setSubTaskLoading(true);
+    try {
+      await createSubTask(projectId, taskId, subTaskTitle.trim());
+      setSubTaskTitle("");
+      await reloadTask();
+      toast.success("Subtask added.");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error ? error.message : "Unable to add subtask.",
+      );
+    } finally {
+      setSubTaskLoading(false);
+    }
+  };
+
+  const handleSubTaskCompletion = async (
+    subTaskId: string,
+    isCompleted: boolean,
+  ) => {
+    if (!projectId) return;
+    setSubTaskLoading(true);
+    try {
+      await updateSubTask(projectId, subTaskId, !isCompleted);
+      await reloadTask();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to update subtask.",
+      );
+    } finally {
+      setSubTaskLoading(false);
+    }
+  };
+
+  const handleDeleteSubTask = async (subTaskId: string) => {
+    if (!projectId) return;
+    setSubTaskLoading(true);
+    try {
+      await deleteSubTask(projectId, subTaskId);
+      await reloadTask();
+      toast.success("Subtask deleted.");
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to delete subtask.",
+      );
+    } finally {
+      setSubTaskLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950/50 px-4 py-8 text-white">
@@ -47,17 +121,33 @@ const TaskDetails = () => {
             </h1>
           </div>
 
-          <span
-            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-              task?.status === "completed"
-                ? "bg-emerald-100 text-emerald-700"
-                : task?.status === "in-progress"
-                  ? "bg-amber-100 text-amber-700"
-                  : "bg-slate-200 text-slate-700"
-            }`}
-          >
-            {task?.status ?? "pending"}
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-3">
+            <span
+              className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                task?.status === "done"
+                  ? "bg-emerald-400/10 text-emerald-300"
+                  : task?.status === "in_progress"
+                    ? "bg-amber-400/10 text-amber-300"
+                    : "bg-slate-800 text-slate-300"
+              }`}
+            >
+              {task?.status === "in_progress"
+                ? "In progress"
+                : task?.status === "done"
+                  ? "Done"
+                  : task?.status === "todo"
+                    ? "To do"
+                    : task?.status ?? "Loading"}
+            </span>
+            {projectId && taskId && (
+              <Link
+                to={`/projects/${projectId}/tasks/${taskId}/edit`}
+                className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white"
+              >
+                Edit task
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-[1.5fr_0.9fr]">
@@ -83,62 +173,105 @@ const TaskDetails = () => {
 
               {subtasks.length > 0 ? (
                 <div className="space-y-3">
-                  {subtasks.map((subtask) => (
-                    <div
-                      key={subtask._id ?? subtask.id}
-                      className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-950/50 text-white px-3 py-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          aria-label={`Mark ${subtask.title} as ${
-                            subtask.completed ? "pending" : "completed"
-                          }`}
-                          onClick={() => {}}
-                          className={`flex h-5 w-5 text-slate-300 items-center justify-center rounded-full border-2 transition-colors ${
-                            subtask.completed
-                              ? "border-emerald-500 bg-emerald-500"
-                              : "border-slate-300 bg-white hover:border-indigo-400"
-                          }`}
-                        >
-                          {subtask.completed && (
-                            <svg
-                              viewBox="0 0 20 20"
-                              className="h-3 w-3 fill-white"
-                              aria-hidden="true"
-                            >
-                              <path d="M7.05 13.4L2.5 8.85l1.4-1.4 3.15 3.15 7.05-7.05 1.4 1.4-8.45 8.45z" />
-                            </svg>
-                          )}
-                        </button>
-                        <span
-                          className={`font-medium ${
-                            subtask.completed
-                              ? "text-slate-500 line-through"
-                              : "text-slate-700"
-                          }`}
-                        >
-                          {subtask.title}
-                        </span>
-                      </div>
-
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                          subtask.completed
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
+                  {subtasks.map((subtask) => {
+                    const isCompleted =
+                      subtask.isCompleted ?? subtask.completed ?? false;
+                    const subTaskId = subtask._id ?? subtask.id;
+                    return (
+                      <div
+                        key={subTaskId ?? subtask.title}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-slate-700 bg-slate-950/50 px-3 py-3 text-white"
                       >
-                        {subtask.completed ? "Done" : "Pending"}
-                      </span>
-                    </div>
-                  ))}
+                        <div className="flex min-w-0 items-center gap-3">
+                          <button
+                            type="button"
+                            disabled={subTaskLoading || !subTaskId}
+                            aria-label={`Mark ${subtask.title} as ${
+                              isCompleted ? "pending" : "completed"
+                            }`}
+                            onClick={() =>
+                              subTaskId &&
+                              void handleSubTaskCompletion(
+                                subTaskId,
+                                isCompleted,
+                              )
+                            }
+                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 text-slate-300 transition-colors disabled:opacity-50 ${
+                              isCompleted
+                                ? "border-emerald-500 bg-emerald-500"
+                                : "border-slate-500 hover:border-indigo-400"
+                            }`}
+                          >
+                            {isCompleted && (
+                              <svg
+                                viewBox="0 0 20 20"
+                                className="h-3 w-3 fill-white"
+                                aria-hidden="true"
+                              >
+                                <path d="M7.05 13.4L2.5 8.85l1.4-1.4 3.15 3.15 7.05-7.05 1.4 1.4-8.45 8.45z" />
+                              </svg>
+                            )}
+                          </button>
+                          <span
+                            className={`truncate font-medium ${
+                              isCompleted
+                                ? "text-slate-500 line-through"
+                                : "text-slate-200"
+                            }`}
+                          >
+                            {subtask.title}
+                          </span>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span
+                            className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                              isCompleted
+                                ? "bg-emerald-400/10 text-emerald-300"
+                                : "bg-amber-400/10 text-amber-300"
+                            }`}
+                          >
+                            {isCompleted ? "Done" : "Pending"}
+                          </span>
+                          <button
+                            type="button"
+                            disabled={subTaskLoading || !subTaskId}
+                            onClick={() =>
+                              subTaskId && void handleDeleteSubTask(subTaskId)
+                            }
+                            aria-label={`Delete ${subtask.title}`}
+                            className="rounded-md p-1.5 text-slate-500 hover:bg-rose-400/10 hover:text-rose-300 disabled:opacity-50"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
                   No subtasks available for this task.
                 </div>
               )}
+              <form
+                onSubmit={handleAddSubTask}
+                className="mt-4 flex flex-col gap-2 sm:flex-row"
+              >
+                <input
+                  value={subTaskTitle}
+                  onChange={(event) => setSubTaskTitle(event.target.value)}
+                  aria-label="New subtask title"
+                  placeholder="Add a subtask"
+                  className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-indigo-400"
+                />
+                <button
+                  type="submit"
+                  disabled={subTaskLoading || !subTaskTitle.trim()}
+                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Add subtask
+                </button>
+              </form>
             </section>
           </div>
 
@@ -178,7 +311,10 @@ const TaskDetails = () => {
               <p className="text-3xl font-bold">
                 {subtasks.length > 0
                   ? `${Math.round(
-                      (subtasks.filter((subtask) => subtask.completed).length /
+                      (subtasks.filter(
+                        (subtask) =>
+                          subtask.isCompleted ?? subtask.completed ?? false,
+                      ).length /
                         subtasks.length) *
                         100,
                     )}%`

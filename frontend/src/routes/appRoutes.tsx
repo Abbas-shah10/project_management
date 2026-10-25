@@ -7,6 +7,9 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import Signup from "../pages/auth/Signup";
 import ProjectDetails from "../pages/projects/ProjectDetails";
 import TaskDetails from "../pages/tasks/TaskDetails";
+import Teams from "../pages/teams/Teams";
+import EditTask from "../pages/tasks/EditTask";
+import Tasks from "../pages/tasks/Tasks";
 
 const AppRoutes = () => {
   return (
@@ -19,12 +22,18 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoutes />}>
         <Route element={<AppLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="/tasks" element={<Tasks />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route
             path="/projects/:projectId/tasks/:taskId"
             element={<TaskDetails />}
           />
+          <Route
+            path="/projects/:projectId/tasks/:taskId/edit"
+            element={<EditTask />}
+          />
+          <Route path="/teams" element={<Teams />} />
         </Route>
       </Route>
     </Routes>

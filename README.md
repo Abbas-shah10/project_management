@@ -50,17 +50,14 @@ For a portfolio, this is a strong choice because it shows that you can build som
 
 ## Core features
 
-- User authentication and role-based access
-- Project creation and management
-- Task assignment and status updates
-- Priority levels and deadlines
-- Team collaboration features
-- Dashboard analytics for project health
-- Search, filtering, and sorting
-- Comments or activity tracking
-- Notifications and reminders
+- User authentication and project-level role access
+- Project creation, editing, deletion, and member management
+- Task creation, editing, assignment, priorities, statuses, and due dates
+- Subtask creation, completion tracking, and deletion
+- Dashboard statistics and project/task progress summaries
+- Search and filtering for projects, tasks, and team members
+- Project team directory and member invitations
 - Responsive web interface
-- API endpoints for future integrations
 
 ## Tech stack
 
@@ -207,15 +204,23 @@ To make this project stand out in a portfolio, it helps to highlight:
 
 ## Roadmap
 
-Planned future improvements:
+### Implemented in this version
 
-- Add drag-and-drop kanban board
+- Live dashboard statistics for projects, tasks, members, and task progress
+- Searchable task directory with project/status filters and task deletion
+- Task creation and editing with assignment, priority, due dates, and status
+- Subtask creation, completion updates, and deletion
+- Searchable team directory with project membership and invitations
+
+### Remaining improvements
+
+- Add a drag-and-drop kanban board
 - Add real-time collaboration with websockets
-- Add file attachments and comments
+- Complete the file-attachment UI and add comments or activity tracking
 - Add team notifications and reminders
-- Add reporting and charts
+- Add richer reporting and historical charts
 - Add admin panel and advanced permissions
-- Add mobile-friendly experience
+- Continue improving the mobile experience
 - Add CI/CD workflow and automated tests
 
 ## Contributing

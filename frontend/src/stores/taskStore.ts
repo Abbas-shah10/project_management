@@ -2,40 +2,49 @@ import { create } from "zustand";
 import type { Project } from "../pages/projects/Projects";
 import * as taskApi from "../api/taskApi";
 
+export type TaskStatus = "todo" | "in_progress" | "done";
+export type TaskPriority = "low" | "medium" | "high" | "urgent";
+
 export interface Task {
   _id: string;
   title: string;
-  description: string;
-  project: Project;
-  assignedTo: {
-    _id: string;
-    username: string;
-  };
-  status: "todo" | "in-progress" | "done";
+  description?: string;
+  project: Project | string | { _id?: string; name?: string };
+  assignedTo?: {
+    _id?: string;
+    username?: string;
+    fullName?: string;
+  } | null;
+  status: TaskStatus;
+  priority?: TaskPriority;
+  dueDate?: string;
+  createdAt?: string;
   attachment?: string;
-  priority: "low" | "medium" | "high";
-  createdBy: string;
+  createdBy?: string | { _id?: string; username?: string };
+  subTasks?: SubTask[];
 }
 
 export interface SubTask {
   _id: string;
   title: string;
   isCompleted: boolean;
-  createdBy: string;
+  createdBy?: string | { _id?: string; username?: string };
 }
 
 interface TaskState {
   tasks: Task[];
-  task: null;
+  task: Task | null;
   loading: boolean;
   error: string | null;
   fetchAllTasks: (projectId: string) => Promise<void>;
   createTask: (
     title: string,
     description: string,
-    status: "todo" | "in_progress" | "done",
+    status: TaskStatus,
     assignedTo: string,
     projectId: string,
+    priority?: TaskPriority,
+    dueDate?: string,
   ) => Promise<void>;
   deleteTask: (taskId: string, projectId: string) => Promise<void>;
   getTaskById: (taskId: string, projectId: string) => Promise<void>;
@@ -45,7 +54,9 @@ interface TaskState {
     title: string,
     description: string,
     assignedTo: string,
-    status: "todo" | "in_progress" | "done",
+    status: TaskStatus,
+    priority?: TaskPriority,
+    dueDate?: string,
   ) => Promise<void>;
 }
 
@@ -61,8 +72,12 @@ const useTaskStore = create<TaskState>((set) => ({
       const res = await taskApi.fetchAllTasks(projectId);
 
       set({ tasks: res.tasks || [], loading: false, error: null });
-    } catch (error: any) {
-      set({ loading: false, error: error.message || "Failed to fetch tasks" });
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error: error instanceof Error ? error.message : "Failed to fetch tasks",
+      });
+      throw error;
     }
   },
   createTask: async (
@@ -71,6 +86,8 @@ const useTaskStore = create<TaskState>((set) => ({
     status: "todo" | "in_progress" | "done",
     assignedTo: string,
     projectId: string,
+    priority: TaskPriority = "medium",
+    dueDate?: string,
   ) => {
     set({ loading: true, error: null });
     try {
@@ -80,10 +97,20 @@ const useTaskStore = create<TaskState>((set) => ({
         status,
         assignedTo,
         projectId,
+        priority,
+        dueDate,
       );
-      set({ tasks: [...res.tasks], loading: false, error: null });
-    } catch (error: any) {
-      set({ loading: false, error: error.message || "Failed to create task" });
+      set((state) => ({
+        tasks: [...state.tasks, res],
+        loading: false,
+        error: null,
+      }));
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error: error instanceof Error ? error.message : "Failed to create task",
+      });
+      throw error;
     }
   },
   deleteTask: async (taskId: string, projectId: string) => {
@@ -95,17 +122,25 @@ const useTaskStore = create<TaskState>((set) => ({
         loading: false,
         error: null,
       }));
-    } catch (error: any) {
-      set({ loading: false, error: error.message || "Failed to delete task" });
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error: error instanceof Error ? error.message : "Failed to delete task",
+      });
+      throw error;
     }
   },
   getTaskById: async (taskId: string, projectId: string) => {
-    set({ loading: true, error: null });
+    set({ loading: true, error: null, task: null });
     try {
       const data = await taskApi.fetchTaskById(taskId, projectId);
       set({ task: data, loading: false, error: null });
-    } catch (error: any) {
-      set({ loading: false, error: error.message || "Failed to fetch task" });
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error: error instanceof Error ? error.message : "Failed to fetch task",
+      });
+      throw error;
     }
   },
   updateTask: async (
@@ -114,7 +149,9 @@ const useTaskStore = create<TaskState>((set) => ({
     title: string,
     description: string,
     assignedTo: string,
-    status: "todo" | "in_progress" | "done",
+    status: TaskStatus,
+    priority: TaskPriority = "medium",
+    dueDate?: string,
   ) => {
     set({ loading: true, error: null });
     try {
@@ -125,11 +162,22 @@ const useTaskStore = create<TaskState>((set) => ({
         description,
         assignedTo,
         status,
+        priority,
+        dueDate,
       });
 
-      set({ tasks: [...res.tasks], loading: false, error: null });
-    } catch (error: any) {
-      set({ loading: false, error: error.message || "Failed to update task" });
+      set((state) => ({
+        tasks: state.tasks.map((task) => (task._id === taskId ? res : task)),
+        task: state.task?._id === taskId ? res : state.task,
+        loading: false,
+        error: null,
+      }));
+    } catch (error: unknown) {
+      set({
+        loading: false,
+        error: error instanceof Error ? error.message : "Failed to update task",
+      });
+      throw error;
     }
   },
 }));

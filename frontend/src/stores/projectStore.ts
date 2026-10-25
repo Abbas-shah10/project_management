@@ -212,13 +212,8 @@ const useProjectStore = create<ProjectState>((set, get) => ({
   ) => {
     set({ loading: true, error: null });
     try {
-      const data = await addMembersToProject(projectId, email, role);
-
-      set({
-        projects: data.projects || data.projects,
-        loading: false,
-        error: null,
-      });
+      await addMembersToProject(projectId, email, role);
+      set({ loading: false, error: null });
     } catch (error: unknown) {
       set({
         loading: false,
@@ -227,6 +222,7 @@ const useProjectStore = create<ProjectState>((set, get) => ({
             ? error.message
             : "Error adding member to project",
       });
+      throw error;
     }
   },
   deleteMemberById: async (projectId: string, userId: string) => {

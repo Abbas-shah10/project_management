@@ -5,6 +5,8 @@ import { canManageProject } from "../../utils/permissions";
 import { useTaskStore } from "../../stores/taskStore";
 import CreateTaskModal from "../tasks/CreateTaskModal";
 import TaskCard from "../../components/layout/TaskCard";
+import { Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 const formatProjectTime = (value: unknown): string => {
   if (value === undefined || value === null || value === "") return "—";
@@ -21,13 +23,17 @@ const formatProjectTime = (value: unknown): string => {
 const ProjectDetails = () => {
   const { id } = useParams();
   const { fetchProjectById, project } = useProjectStore();
-  const { fetchAllTasks, tasks } = useTaskStore();
+  const { fetchAllTasks, tasks, deleteTask } = useTaskStore();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const canManage = canManageProject(project?.currentUserRole);
   useEffect(() => {
     if (id) {
       fetchProjectById(id);
-      fetchAllTasks(id);
+      void fetchAllTasks(id).catch((error: unknown) => {
+        toast.error(
+          error instanceof Error ? error.message : "Unable to load project tasks.",
+        );
+      });
     }
   }, [fetchProjectById, id, fetchAllTasks]);
   return (
@@ -99,9 +105,44 @@ const ProjectDetails = () => {
               </div>
               <ul className="mt-5 divide-y divide-slate-100">
                 {tasks.map((task) => (
-                  <TaskCard key={task._id} task={task} />
+                  <li
+                    key={task._id}
+                    className="flex items-center gap-3 py-3 first:pt-0"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <TaskCard task={task} />
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${task.title}`}
+                      title="Delete task"
+                      onClick={async () => {
+                        if (!id || !window.confirm(`Delete "${task.title}"?`)) {
+                          return;
+                        }
+                        try {
+                          await deleteTask(task._id, id);
+                          toast.success("Task deleted.");
+                        } catch (error: unknown) {
+                          toast.error(
+                            error instanceof Error
+                              ? error.message
+                              : "Unable to delete task.",
+                          );
+                        }
+                      }}
+                      className="shrink-0 rounded-lg p-2 text-slate-500 transition hover:bg-rose-400/10 hover:text-rose-300"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </li>
                 ))}
               </ul>
+              {tasks.length === 0 && (
+                <p className="mt-5 rounded-xl border border-dashed border-slate-700 p-6 text-center text-sm text-slate-500">
+                  No tasks in this project yet.
+                </p>
+              )}
             </section>
             <aside className="rounded-2xl border border-slate-900/50 bg-slate-950/50 text-white p-6 shadow-sm">
               <h2 className="text-lg font-bold">Team</h2>

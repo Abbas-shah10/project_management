@@ -1,7 +1,29 @@
 import api from "./axios";
 
-export const getAllProjects = async () => {
-  const { data } = await api.get("/projects");
+export interface ProjectSummary {
+  _id: string;
+  name: string;
+  description?: string;
+  currentUserRole?: "member" | "admin" | "project_admin";
+  members?: Array<{
+    _id?: string;
+    role?: "member" | "admin" | "project_admin";
+    user?: {
+      _id?: string;
+      username?: string;
+      fullName?: string;
+      email?: string;
+      avatar?: string;
+    };
+  }>;
+}
+
+export const getAllProjects = async (): Promise<{
+  projects: ProjectSummary[];
+}> => {
+  const { data } = await api.get<{ data: { projects: ProjectSummary[] } }>(
+    "/projects",
+  );
   return data.data;
 };
 

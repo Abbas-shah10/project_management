@@ -23,7 +23,7 @@ const getTasks = asyncHandler(async (req, res) => {
   )
 });
 const createTask = asyncHandler(async (req, res) => {
-  const { title, description, assignedTo, status } = req.body;
+  const { title, description, assignedTo, status, priority, dueDate } = req.body;
   const { projectId } = req.params;
 
   const project = await Project.findById(projectId)
@@ -42,18 +42,24 @@ const createTask = asyncHandler(async (req, res) => {
     }
   })
 
-  const task = await Task.create({
+  const createdTask = await Task.create({
     title,
     description,
     project: new mongoose.Types.ObjectId(projectId),
     assignedTo: assignedTo ? new mongoose.Types.ObjectId(assignedTo) : undefined,
     status,
+    priority,
+    dueDate,
     attachments,
     createdBy: new mongoose.Types.ObjectId(req.user._id),
   })
+  const task = await Task.findById(createdTask._id).populate(
+    'assignedTo',
+    'avatar username fullName'
+  );
 
   return res.status(201).json(
-    new ApiResponse(201, 'Task created successfully', task)
+    new ApiResponse(201, task, 'Task created successfully')
   )
 
 });
@@ -64,6 +70,8 @@ const updateTask = asyncHandler(async (req, res) => {
     description,
     assignedTo,
     status,
+    priority,
+    dueDate,
     removeAttachments,
   } = req.body;
 
@@ -78,6 +86,8 @@ const updateTask = asyncHandler(async (req, res) => {
   if (title !== undefined) task.title = title;
   if (description !== undefined) task.description = description;
   if (status !== undefined) task.status = status;
+  if (priority !== undefined) task.priority = priority;
+  if (dueDate !== undefined) task.dueDate = dueDate || undefined;
 
   if (assignedTo !== undefined) {
     if (assignedTo === null || assignedTo === '') {
@@ -119,7 +129,7 @@ const updateTask = asyncHandler(async (req, res) => {
   );
 
   return res.status(200).json(
-    new ApiResponse(200, 'Task updated successfully', updatedTask)
+    new ApiResponse(200, updatedTask, 'Task updated successfully')
   );
 });
 const deleteTask = asyncHandler(async (req, res) => {
@@ -143,16 +153,17 @@ const deleteTask = asyncHandler(async (req, res) => {
   await task.deleteOne();
 
   return res.status(200).json(
-    new ApiResponse(200, 'Task deleted successfully', null)
+    new ApiResponse(200, null, 'Task deleted successfully')
   );
 
 });
 const getTaskById = asyncHandler(async (req, res) => {
-  const { taskId } = req.params;
+  const { taskId, projectId } = req.params;
   const task = await Task.aggregate([
     {
       $match: {
         _id: new mongoose.Types.ObjectId(taskId),
+        project: new mongoose.Types.ObjectId(projectId),
       }
     },
     {
@@ -216,7 +227,7 @@ const getTaskById = asyncHandler(async (req, res) => {
 
 
 
-  if (!task || task.length === 0) {
+  if (!task) {
     throw new ApiError(404, "Task not found")
   }
 
@@ -226,11 +237,11 @@ const getTaskById = asyncHandler(async (req, res) => {
 
 });
 const createSubTask = asyncHandler(async (req, res) => {
-  const { title, createdBy, isCompleted } = req.body;
+  const { title } = req.body;
   const { taskId, projectId } = req.params;
 
-  if (!title || !createdBy) {
-    return new ApiError(400, "All the given fields are required")
+  if (!title?.trim()) {
+    throw new ApiError(400, "Subtask title is required")
   }
   const project = await Project.findById(projectId);
 
@@ -250,47 +261,68 @@ const createSubTask = asyncHandler(async (req, res) => {
   }
 
   const subTask = await SubTask.create({
-    title,
-    createdBy: createdBy ? new mongoose.Types.ObjectId(createdBy) : undefined,
+    title: title.trim(),
+    createdBy: new mongoose.Types.ObjectId(req.user._id),
     task: new mongoose.Types.ObjectId(taskId),
-    isCompleted
   })
 
 
   return res.status(201).json(
-    new ApiResponse(201, 'SubTask created successfully', subTask)
+    new ApiResponse(201, subTask, 'Subtask created successfully')
   )
 
 
 });
 const updateSubTask = asyncHandler(async (req, res) => {
-  const { subTaskId } = req.params;
+  const { subTaskId, projectId } = req.params;
+  const { isCompleted } = req.body;
 
-  const subTask = await SubTask.findById(subTaskId)
+  const subTask = await SubTask.findById(subTaskId);
 
   if (!subTask) {
-    return ApiError(404, "Sub-Task not found")
+    throw new ApiError(404, "Subtask not found")
   }
 
-  if (!subTask.isCompleted) {
-    subTask.isCompleted = true;
+  const task = await Task.findOne({
+    _id: subTask.task,
+    project: projectId,
+  });
+
+  if (!task) {
+    throw new ApiError(404, "Subtask not found")
+  }
+
+  if (typeof isCompleted === "boolean") {
+    subTask.isCompleted = isCompleted;
     await subTask.save();
   }
 
   return res.status(200).json(
-    new ApiResponse(200, "Task status updated successfully", subTask)
+    new ApiResponse(200, subTask, "Subtask updated successfully")
   )
 });
 const deleteSubTask = asyncHandler(async (req, res) => {
-  const { subTaskId } = req.params;
+  const { subTaskId, projectId } = req.params;
 
-  const subTask = await SubTask.findByIdAndDelete(subTaskId)
+  const subTask = await SubTask.findById(subTaskId);
 
   if (!subTask) {
-    return new ApiError(404, "Subtask not found")
-  } else {
-    return new ApiResponse(200, {}, "SubTask delete successfully")
+    throw new ApiError(404, "Subtask not found")
   }
+
+  const task = await Task.findOne({
+    _id: subTask.task,
+    project: projectId,
+  });
+
+  if (!task) {
+    throw new ApiError(404, "Subtask not found")
+  }
+
+  await subTask.deleteOne();
+  return res.status(200).json(
+    new ApiResponse(200, null, "Subtask deleted successfully")
+  );
 });
 
 export {

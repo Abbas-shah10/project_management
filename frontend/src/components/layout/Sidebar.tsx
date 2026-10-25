@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   FolderKanban,
+  ListChecks,
   Users,
   Settings,
   LogOut,
@@ -20,6 +21,11 @@ const mainItems = [
     label: "Projects",
     to: "/projects",
     icon: FolderKanban,
+  },
+  {
+    label: "Tasks",
+    to: "/tasks",
+    icon: ListChecks,
   },
   {
     label: "Teams",
