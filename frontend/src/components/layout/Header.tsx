@@ -20,10 +20,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <Menu size={19} />
       </button>
       <div className="hidden items-center gap-3 md:flex">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
-          <Sparkles size={17} />
-        </div>
-
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
             Workspace
