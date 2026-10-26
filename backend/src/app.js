@@ -1,21 +1,22 @@
 import express from 'express';
-import cors from 'cors'
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 
 // basic configurations
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
-app.use(express.static("public"))
+app.use(express.static(fileURLToPath(new URL("../public", import.meta.url))))
 app.use(cookieParser());
 
 
 // cors configurations
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
-  methods: ['GET', "PUT", 'POST', "DELETE"],
+  methods: ['GET', "PUT", 'POST', "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }))
 // import routes

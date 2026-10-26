@@ -15,6 +15,7 @@ This project is designed to be easy to understand for beginners while still bein
 - [Getting started](#getting-started)
 - [Environment variables](#environment-variables)
 - [Running the project](#running-the-project)
+- [Deploying to Vercel](#deploying-to-vercel)
 - [Usage flow](#usage-flow)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
@@ -142,17 +143,25 @@ cd ../backend && npm install
 
 ## Environment variables
 
-Create a `.env` file in the project root or in the backend folder and configure the values below.
+Create a `.env` file in the `backend` folder for local development. The backend reads these variables:
 
 ```env
-PORT=5000
-DATABASE_URL=mongodb://localhost:27017/project_management
-JWT_SECRET=your_super_secret_key
-CLIENT_URL=http://localhost:3000
-NODE_ENV=development
+PORT=8080
+MONGO_URI=mongodb://localhost:27017/project_management
+ACCESS_TOKEN_SECRET=replace_with_a_long_random_secret
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET=replace_with_a_different_long_random_secret
+REFRESH_TOKEN_EXPIRY=10d
+FRONTEND_URL=http://localhost:5173
+SERVER_URL=http://localhost:8080
+FORGOT_PASSWORD_REDIRECT_URL=http://localhost:5173/reset-password
+MAILTRAP_SMTP_HOST=
+MAILTRAP_SMTP_PORT=
+MAILTRAP_SMTP_USER=
+MAILTRAP_SMTP_PASS=
 ```
 
-You can also use a `.env.example` file as a template for team members and deployment.
+The four `MAILTRAP_SMTP_*` values are needed for email verification and password reset emails.
 
 ## Running the project
 
@@ -168,6 +177,25 @@ If using separate frontend/backend services:
 cd server && npm run dev
 cd client && npm run dev
 ```
+
+### Deploying to Vercel
+
+The root `vercel.json` builds the Vite frontend, serves its static output, and routes `/api/*` requests to the Express function. In Vercel, import this repository and leave the project root directory set to the repository root.
+
+Add the following environment variables in the Vercel project settings for Production and Preview deployments:
+
+- `MONGO_URI`
+- `ACCESS_TOKEN_SECRET`
+- `ACCESS_TOKEN_EXPIRY`
+- `REFRESH_TOKEN_SECRET`
+- `REFRESH_TOKEN_EXPIRY`
+- `SERVER_URL` (the deployed site's origin, such as `https://your-project.vercel.app`)
+- `FORGOT_PASSWORD_REDIRECT_URL` (the deployed frontend password-reset URL)
+- `MAILTRAP_SMTP_HOST`, `MAILTRAP_SMTP_PORT`, `MAILTRAP_SMTP_USER`, and `MAILTRAP_SMTP_PASS` for email features
+
+`FRONTEND_URL` is optional for this same-domain deployment; set it only if the browser frontend is hosted on a different origin. `VITE_API_URL` is also optional and defaults to `/api/v1`.
+
+After setting variables, deploy from the Vercel dashboard or run `npx vercel` from the repository root. Vercel Functions have ephemeral filesystems, so the current task attachment upload implementation, which writes to local disk, is not suitable for production. Configure durable object storage for attachments before relying on that feature.
 
 ### Production build
 
