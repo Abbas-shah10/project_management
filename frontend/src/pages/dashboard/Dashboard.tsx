@@ -81,10 +81,12 @@ const Dashboard = () => {
           projects.map(async (project) => {
             const taskResponse = await fetchAllTasks(project._id);
             return Array.isArray(taskResponse?.tasks)
-              ? taskResponse.tasks.map((task: Omit<DashboardTask, "project">) => ({
-                  ...task,
-                  project: { _id: project._id, name: project.name },
-                }))
+              ? taskResponse.tasks.map(
+                  (task: Omit<DashboardTask, "project">) => ({
+                    ...task,
+                    project: { _id: project._id, name: project.name },
+                  }),
+                )
               : [];
           }),
         );
@@ -131,9 +133,8 @@ const Dashboard = () => {
   );
   const taskCounts = {
     todo: dashboard.tasks.filter((task) => task.status === "todo").length,
-    in_progress: dashboard.tasks.filter(
-      (task) => task.status === "in_progress",
-    ).length,
+    in_progress: dashboard.tasks.filter((task) => task.status === "in_progress")
+      .length,
     done: completedTasks,
   };
   const recentTasks = [...dashboard.tasks]
@@ -177,7 +178,6 @@ const Dashboard = () => {
       <section className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <div>
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-300">
-            <Sparkles size={14} />
             {new Date().toLocaleDateString(undefined, {
               weekday: "long",
               month: "long",
@@ -271,7 +271,9 @@ const Dashboard = () => {
                 {(["todo", "in_progress", "done"] as const).map((status) => (
                   <div key={status}>
                     <div className="mb-1 flex justify-between text-xs">
-                      <span className="text-slate-400">{statusLabel[status]}</span>
+                      <span className="text-slate-400">
+                        {statusLabel[status]}
+                      </span>
                       <span className="text-slate-300">
                         {loading || error ? "—" : taskCounts[status]}
                       </span>
@@ -428,7 +430,9 @@ const Dashboard = () => {
           </div>
         ) : (
           <p className="mt-5 text-sm text-slate-500">
-            {error ? "Task statistics are unavailable." : "No tasks to show yet."}
+            {error
+              ? "Task statistics are unavailable."
+              : "No tasks to show yet."}
           </p>
         )}
       </section>
