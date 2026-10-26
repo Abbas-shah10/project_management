@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, Menu, Search, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search } from "lucide-react";
 import useAuthStore from "../../stores/authStore";
 
 interface HeaderProps {
