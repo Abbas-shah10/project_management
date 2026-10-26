@@ -6,7 +6,6 @@ import {
   Clock3,
   FolderKanban,
   ListChecks,
-  Sparkles,
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
