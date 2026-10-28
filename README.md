@@ -269,39 +269,3 @@ git checkout -b feature/task-dashboard
 git commit -m "Add dashboard analytics for project overview"
 git push origin feature/task-dashboard
 ```
-
-## License
-
-This project is licensed under the MIT License.
-
-```text
-MIT License
-
-Copyright (c) 2025
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
-## Contact
-
-For questions, collaboration, or portfolio discussion:
-
-- GitHub: [https://github.com/Abbas-shah10]
-
-## Final note
-
-This project is a strong example of a real-world application because it goes beyond a small demo and demonstrates problem solving, architecture thinking, and product value. It is suitable for both beginner-level understanding and senior-level code review.
-
-If you want, this README can later be customized further for:
-
-- a Node.js + React app
-- a MERN stack app
-- a SaaS dashboard product
